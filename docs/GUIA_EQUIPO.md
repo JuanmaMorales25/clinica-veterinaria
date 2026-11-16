@@ -127,6 +127,24 @@ Cada pantalla del frontend es un componente independiente con carga diferida. La
 existen en `app.routes.ts` apuntando a `enConstruccion(...)`: al terminar una pantalla, se
 cambia esa línea por el `loadComponent` real.
 
+### Piezas compartidas que ya existen
+
+Antes de crear algo parecido, revisar si ya está:
+
+| Pieza | Dónde | Para qué |
+|---|---|---|
+| `RepositorioMascota` | `backend/app/modulos/pacientes/repositorio.py` | Buscar y obtener mascotas con propietario y alergias. Se le pueden agregar métodos. |
+| `Mascota.describir_edad(hoy)` | `pacientes/modelos.py` | Edad legible: "6 meses", "1 año". |
+| `ProgramadorRecordatorios` | `backend/app/modulos/notificaciones/programador.py` | Interfaz del Entregable 2. `ProgramadorRecordatoriosBD` deja el aviso de la próxima dosis en la tabla `recordatorio` al cerrar la atención; el programador de tareas solo tiene que enviar los que estén `PROGRAMADO` y vencidos, respetando la preferencia del propietario (E2). |
+| Errores de validación | `app/main.py` | Los datos inválidos también responden `{codigo: "DATOS_INVALIDOS", mensaje, detalle: {campos}}`. |
+| `/api/salud` | `app/main.py` | Devuelve `modo_demo` para que el frontend sepa si las teclas 1–5 están activas. |
+| `/api/demo/...` | `app/core/demo.py` | Endpoints de las fallas provocadas. Solo responden con `MODO_DEMO=true`. |
+| `escucharTeclaDemo(tecla, accion)` | `frontend/src/app/core/demo/demo.service.ts` | Registra una tecla de demostración en el constructor del componente. Ya se usa con la 2 (M2.1) y la 3 (C3). |
+| `cv-tarjeta-paciente` | `frontend/src/app/compartido/tarjeta-paciente/` | Ficha del paciente en variante completa o compacta. |
+| `cv-dialogo` | `frontend/src/app/compartido/dialogo/` | Ventana modal sobre fondo atenuado (`<dialog>` nativo). |
+| `cv-estado-etiqueta`, `cv-aviso` | `frontend/src/app/compartido/` | Tipos `exito`, `alerta`, `advertencia`, `info` (morado, reloj de arena) y `neutro` (gris, candado). Aceptan `icono` para cambiar el icono. |
+| Clases globales | `frontend/src/styles.scss` | `.titulo-pagina`, `.tarjeta__encabezado`, `.entrada--destacada`, `.entrada--solo-lectura`, `.ayuda`, `select.entrada`. |
+
 ## 4. Nombres que deben coincidir con el Entregable 2
 
 El profesor va a comparar el código con los diagramas. Usar estos nombres tal cual:

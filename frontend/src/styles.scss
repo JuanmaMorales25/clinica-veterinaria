@@ -17,8 +17,13 @@
   --color-exito-fondo: #e6f2ea;
   --color-advertencia: #8a5a00;
   --color-advertencia-fondo: #fff4dc;
+  --color-info: #5b4a7d;
+  --color-info-fondo: #efebf6;
+  --color-neutro-fondo: #eef1f3;
+  --color-velo: rgba(31, 41, 51, 0.6);
 
   --fuente: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --texto-pagina: 33px;
   --texto-titulo: 27px;
   --texto-seccion: 24px;
   --texto-destacado: 20px;
@@ -85,6 +90,19 @@ a {
   font-weight: 600;
 }
 
+.tarjeta__encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.titulo-pagina {
+  color: var(--color-primario);
+  font-size: var(--texto-pagina);
+  font-weight: 600;
+}
+
 .campo {
   display: flex;
   flex-direction: column;
@@ -102,6 +120,11 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 22px;
+
+  // En pantallas angostas los campos bajan a otra fila en lugar de comprimirse.
+  > .campo {
+    flex: 1 1 200px;
+  }
 }
 
 .entrada {
@@ -127,10 +150,39 @@ a {
   }
 }
 
+select.entrada {
+  appearance: none;
+  padding-right: 44px;
+  background: var(--color-superficie) url('/iconos/flecha-abajo.svg') no-repeat right 16px center /
+    18px;
+  cursor: pointer;
+}
+
+.entrada--destacada {
+  border: 3px solid var(--color-primario);
+}
+
+.entrada--solo-lectura,
+.entrada--solo-lectura:disabled {
+  display: flex;
+  align-items: center;
+  background: var(--color-neutro-fondo);
+  color: var(--color-texto);
+}
+
 textarea.entrada {
   min-height: 88px;
   padding: 14px 16px;
   resize: vertical;
+}
+
+.ayuda {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--color-primario);
+  font-size: var(--texto-meta);
+  font-weight: 500;
 }
 
 .ayuda-error {

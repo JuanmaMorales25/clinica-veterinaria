@@ -47,9 +47,37 @@ export const routes: Routes = [
     canActivate: [requiereRol(...ROLES_PERSONAL)],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'pacientes' },
-      enConstruccion('pacientes', 'Buscar paciente'),
-      enConstruccion('pacientes/:mascotaId', 'Ficha del paciente'),
-      enConstruccion('consultas/:consultaId', 'Registrar consulta'),
+      {
+        path: 'pacientes',
+        title: 'Buscar paciente · Clínica Veterinaria',
+        loadComponent: () => import('./funcionalidades/atencion/buscar-paciente/buscar-paciente'),
+      },
+      {
+        path: 'pacientes/:mascotaId',
+        title: 'Ficha del paciente · Clínica Veterinaria',
+        loadComponent: () => import('./funcionalidades/atencion/ficha-paciente/ficha-paciente'),
+      },
+      {
+        path: 'consultas/:consultaId',
+        title: 'Registrar consulta · Clínica Veterinaria',
+        loadComponent: () =>
+          import('./funcionalidades/atencion/registrar-consulta/registrar-consulta'),
+      },
+      {
+        path: 'consultas/:consultaId/prescripcion',
+        title: 'Prescripción · Clínica Veterinaria',
+        loadComponent: () => import('./funcionalidades/atencion/prescripcion/prescripcion'),
+      },
+      {
+        path: 'consultas/:consultaId/vacunacion',
+        title: 'Registrar vacunación · Clínica Veterinaria',
+        loadComponent: () => import('./funcionalidades/atencion/vacunacion/vacunacion'),
+      },
+      {
+        path: 'consultas/:consultaId/registro',
+        title: 'Historia clínica · Clínica Veterinaria',
+        loadComponent: () => import('./funcionalidades/atencion/registro-clinico/registro-clinico'),
+      },
       enConstruccion('facturacion/:consultaId', 'Facturación'),
       enConstruccion('citas', 'Citas por confirmar'),
     ],
