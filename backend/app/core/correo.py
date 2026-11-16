@@ -70,11 +70,12 @@ def _enviar_por_http(
                 for adjunto in adjuntos
             ],
         },
-        auth=_credenciales(configuracion.correo_api_usuario, configuracion.correo_api_clave),
+        auth=_credenciales(configuracion.correo_api_auth),
         timeout=15,
     )
     respuesta.raise_for_status()
 
 
-def _credenciales(usuario: str, clave: str) -> tuple[str, str] | None:
+def _credenciales(auth: str) -> tuple[str, str] | None:
+    usuario, _, clave = auth.partition(":")
     return (usuario, clave) if usuario and clave else None
