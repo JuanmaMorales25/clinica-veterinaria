@@ -22,6 +22,9 @@ class ConsultaExistencias(ABC):
     """Lectura del inventario: qué lotes hay y cuál conviene usar."""
 
     @abstractmethod
+    def obtener_lote(self, id_lote: uuid.UUID) -> Lote: ...
+
+    @abstractmethod
     def proponer_lote(self, id_producto: uuid.UUID, cantidad: int, hoy: date) -> Lote | None: ...
 
     @abstractmethod
@@ -109,6 +112,9 @@ class ServicioInventario(ConsultaExistencias, DescuentoInventario):
         self.reglas = reglas or [ReglaLoteVigente(self), ReglaExistenciaSuficiente()]
 
     # --- ConsultaExistencias ---
+
+    def obtener_lote(self, id_lote: uuid.UUID) -> Lote:
+        return self._lote(id_lote)
 
     def proponer_lote(self, id_producto: uuid.UUID, cantidad: int, hoy: date) -> Lote | None:
         """FEFO: el lote vigente que vence primero y alcanza; si ninguno alcanza, el primero."""

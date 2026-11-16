@@ -21,6 +21,10 @@ class Configuracion(BaseSettings):
     smtp_host: str = "localhost"
     smtp_puerto: int = 1025
     correo_remitente: str = "patitas@clinica.veterinaria.com"
+    # En el despliegue el correo sale por la API HTTP de Mailpit en lugar de SMTP.
+    correo_api_url: str = ""
+    correo_api_usuario: str = ""
+    correo_api_clave: str = ""
 
     carne_enlace_horas: int = 24
     dias_aviso_proxima_dosis: int = 7
@@ -39,7 +43,9 @@ class Configuracion(BaseSettings):
 
     @property
     def lista_cors(self) -> list[str]:
-        return [origen.strip() for origen in self.cors_origenes.split(",") if origen.strip()]
+        # Render entrega solo el dominio del servicio; se completa con https://.
+        origenes = [origen.strip() for origen in self.cors_origenes.split(",") if origen.strip()]
+        return [o if o.startswith("http") else f"https://{o}" for o in origenes]
 
 
 @lru_cache
