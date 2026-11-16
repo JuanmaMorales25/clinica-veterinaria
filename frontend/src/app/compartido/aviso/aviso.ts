@@ -1,19 +1,13 @@
 import { Component, computed, input } from '@angular/core';
 
-import { TipoEstado } from '../estado-etiqueta/estado-etiqueta';
-
-const ICONOS: Record<TipoEstado, string> = {
-  exito: 'iconos/check.svg',
-  alerta: 'iconos/advertencia.svg',
-  advertencia: 'iconos/abajo.svg',
-};
+import { ICONOS_ESTADO, TipoEstado } from '../estado-etiqueta/estado-etiqueta';
 
 /** Recuadro de aviso de los flujos alternos (por ejemplo, D2 Existencia insuficiente). */
 @Component({
   selector: 'cv-aviso',
   template: `
     <div [class]="'aviso aviso--' + tipo()" [attr.role]="tipo() === 'exito' ? 'status' : 'alert'">
-      <img [src]="icono()" alt="" width="33" height="33" />
+      <img [src]="iconoFinal()" alt="" width="33" height="33" />
       <div class="aviso__texto">
         <p class="aviso__titulo">{{ titulo() }}</p>
         <ng-content />
@@ -28,6 +22,9 @@ const ICONOS: Record<TipoEstado, string> = {
       padding: 19px;
       border: 2px solid;
       border-radius: var(--radio-entrada);
+      img {
+        flex-shrink: 0;
+      }
     }
     .aviso__texto {
       display: flex;
@@ -61,10 +58,25 @@ const ICONOS: Record<TipoEstado, string> = {
         color: var(--color-advertencia);
       }
     }
+    .aviso--info {
+      background: var(--color-info-fondo);
+      border-color: var(--color-info);
+      .aviso__titulo {
+        color: var(--color-info);
+      }
+    }
+    .aviso--neutro {
+      background: var(--color-neutro-fondo);
+      border-color: var(--color-texto-suave);
+      .aviso__titulo {
+        color: var(--color-texto-suave);
+      }
+    }
   `,
 })
 export class Aviso {
   readonly tipo = input.required<TipoEstado>();
   readonly titulo = input.required<string>();
-  protected readonly icono = computed(() => ICONOS[this.tipo()]);
+  readonly icono = input<string | null>(null);
+  protected readonly iconoFinal = computed(() => this.icono() ?? ICONOS_ESTADO[this.tipo()]);
 }

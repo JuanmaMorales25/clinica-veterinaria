@@ -8,9 +8,11 @@ import { SesionService } from '../../core/autenticacion/sesion.service';
   selector: 'cv-encabezado',
   template: `
     <header class="encabezado">
-      <button type="button" class="encabezado__atras" (click)="volver()" aria-label="Volver">
-        ←
-      </button>
+      @if (conAtras()) {
+        <button type="button" class="encabezado__atras" (click)="volver()" aria-label="Volver">
+          ←
+        </button>
+      }
       <img class="encabezado__logo" src="logo.png" alt="" width="82" height="82" />
       <h1 class="encabezado__titulo">{{ titulo() }}</h1>
       @if (sesion.autenticado()) {
@@ -84,6 +86,8 @@ export class Encabezado {
   readonly titulo = input.required<string>();
   /** Si no se indica, el botón vuelve a la pantalla anterior. */
   readonly rutaAtras = input<string | null>(null);
+  /** Los pasos intermedios de un flujo (por ejemplo, M2.4 o M3.2) no muestran el botón. */
+  readonly conAtras = input(true);
 
   protected readonly sesion = inject(SesionService);
   private readonly router = inject(Router);

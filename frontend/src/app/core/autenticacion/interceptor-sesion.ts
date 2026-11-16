@@ -19,7 +19,9 @@ export const interceptorSesion: HttpInterceptorFn = (peticion, siguiente) => {
   const esApi = peticion.url.startsWith(environment.apiUrl);
 
   const conToken =
-    token && esApi ? peticion.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : peticion;
+    token && esApi
+      ? peticion.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+      : peticion;
 
   return siguiente(conToken).pipe(
     tap((evento) => {
