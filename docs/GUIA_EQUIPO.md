@@ -136,6 +136,7 @@ Antes de crear algo parecido, revisar si ya está:
 | `RepositorioMascota` | `backend/app/modulos/pacientes/repositorio.py` | Buscar y obtener mascotas con propietario y alergias. Se le pueden agregar métodos. |
 | `Mascota.describir_edad(hoy)` | `pacientes/modelos.py` | Edad legible: "6 meses", "1 año". |
 | `ProgramadorRecordatorios` | `backend/app/modulos/notificaciones/programador.py` | Interfaz del Entregable 2. `ProgramadorRecordatoriosBD` deja el aviso de la próxima dosis en la tabla `recordatorio` al cerrar la atención; el programador de tareas solo tiene que enviar los que estén `PROGRAMADO` y vencidos, respetando la preferencia del propietario (E2). |
+| `enviar_correo(destinatario, asunto, cuerpo, adjuntos)` | `backend/app/core/correo.py` | Envío de correo listo para `CanalCorreo`: en local va por SMTP a Mailpit y en el despliegue por la API HTTP de Mailpit (`CORREO_API_URL`). Lo usa el comprobante de la factura. |
 | Errores de validación | `app/main.py` | Los datos inválidos también responden `{codigo: "DATOS_INVALIDOS", mensaje, detalle: {campos}}`. |
 | `/api/salud` | `app/main.py` | Devuelve `modo_demo` para que el frontend sepa si las teclas 1–5 están activas. |
 | `/api/demo/...` | `app/core/demo.py` | Endpoints de las fallas provocadas. Solo responden con `MODO_DEMO=true`. |
@@ -223,8 +224,9 @@ recordatorios → E2.
 
 ## 7. Notificaciones
 
-- **Correo**: se envía por SMTP a Mailpit, que lo atrapa y lo muestra en
-  <http://localhost:8025>. Así se ve en la demostración sin enviar correos reales.
+- **Correo**: se envía con `enviar_correo()` de `app/core/correo.py`. En local va por SMTP a
+  Mailpit, que lo atrapa y lo muestra en <http://localhost:8025>; en el despliegue sale por la
+  API HTTP del Mailpit publicado. Así se ve en la demostración sin enviar correos reales.
 - **Mensajería**: canal simulado. No llama a ningún servicio; guarda cada envío en la tabla
   `mensaje_enviado`.
 - Los dos canales implementan `CanalNotificacion` (Strategy) y quedan intercambiables.
