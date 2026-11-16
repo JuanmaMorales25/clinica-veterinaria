@@ -10,6 +10,8 @@ from app.core.errores import ErrorDeNegocio, manejar_error_de_negocio
 from app.core.seguridad import CABECERA_TOKEN_RENOVADO
 from app.modulos.acceso.rutas import router as rutas_acceso
 from app.modulos.atencion.rutas import router as rutas_atencion
+from app.modulos.facturacion.rutas import router as rutas_facturacion
+from app.modulos.inventario.rutas import router as rutas_inventario
 
 configuracion = obtener_configuracion()
 
@@ -54,6 +56,8 @@ def salud() -> dict[str, str | bool]:
 
 api.include_router(rutas_acceso)
 api.include_router(rutas_atencion)
+api.include_router(rutas_facturacion)
+api.include_router(rutas_inventario)
 api.include_router(rutas_demo)
 
 app.include_router(api)
