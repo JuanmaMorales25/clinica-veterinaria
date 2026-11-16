@@ -78,7 +78,21 @@ export const routes: Routes = [
         title: 'Historia clínica · Clínica Veterinaria',
         loadComponent: () => import('./funcionalidades/atencion/registro-clinico/registro-clinico'),
       },
-      enConstruccion('facturacion/:consultaId', 'Facturación'),
+      {
+        path: 'facturacion/:consultaId',
+        title: 'Cuenta de cobro · Clínica Veterinaria',
+        loadComponent: () => import('./funcionalidades/facturacion/cuenta-cobro/cuenta-cobro'),
+      },
+      {
+        path: 'facturacion/:consultaId/pago',
+        title: 'Registrar pago · Clínica Veterinaria',
+        loadComponent: () => import('./funcionalidades/facturacion/registrar-pago/registrar-pago'),
+      },
+      {
+        path: 'facturacion/:consultaId/comprobante',
+        title: 'Comprobante · Clínica Veterinaria',
+        loadComponent: () => import('./funcionalidades/facturacion/comprobante/comprobante'),
+      },
       enConstruccion('citas', 'Citas por confirmar'),
     ],
   },
