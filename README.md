@@ -64,6 +64,21 @@ cd backend && uv run pytest && uv run ruff check . && uv run ruff format --check
 cd frontend && pnpm build
 ```
 
+## Despliegue
+
+Publicado en Render con el archivo [`render.yaml`](render.yaml):
+
+| Servicio | URL |
+|---|---|
+| Aplicación web | https://clinica-veterinaria-itm.onrender.com |
+| API | https://clinica-veterinaria-itm-api.onrender.com/docs |
+| Bandeja de correos de prueba | https://clinica-veterinaria-itm-correo.onrender.com |
+
+Para crearlo: en Render, **New → Blueprint**, elegir este repositorio y la rama `main`. Render
+pide un valor para `MP_UI_AUTH` (usuario y clave de la bandeja, con el formato `usuario:clave`) y
+crea la base de datos, la API, el correo y el sitio estático. Los servicios gratuitos se duermen
+tras 15 minutos sin uso; el primer ingreso tarda cerca de un minuto.
+
 ## Usuarios de demostración
 
 Todos usan la contraseña `Clinica2026*`.
