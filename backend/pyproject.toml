@@ -1,0 +1,38 @@
+[project]
+name = "clinica-veterinaria-api"
+version = "0.1.0"
+description = "API de la plataforma web para la clínica veterinaria"
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.20.1",
+    "apscheduler>=3.11.3",
+    "fastapi[standard]>=0.163.1",
+    "psycopg[binary]>=3.3.9",
+    "pwdlib[argon2]>=0.4.2",
+    "pydantic-settings>=2.16.3",
+    "pyjwt>=2.15.1",
+    "qrcode[pil]>=8.2",
+    "sqlalchemy>=2.1",
+    "tzdata>=2026.6",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.2.0",
+    "ruff>=0.17.5",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+extend-exclude = ["alembic/versions"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Path", "fastapi.Body"]

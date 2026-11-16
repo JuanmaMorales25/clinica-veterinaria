@@ -1,0 +1,54 @@
+name: clinica-veterinaria
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: clinica
+      POSTGRES_PASSWORD: clinica
+      POSTGRES_DB: clinica
+    ports:
+      - "5435:5432"
+    volumes:
+      - datos-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clinica -d clinica"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Servidor de correo de pruebas: atrapa los correos y los muestra en http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:v1.33
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://clinica:clinica@db:5432/clinica
+      SMTP_HOST: mailpit
+      SMTP_PUERTO: 1025
+      CORS_ORIGENES: http://localhost:4200,http://localhost:8080
+      URL_FRONTEND: http://localhost:8080
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        API_URL: http://localhost:8000/api
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  datos-db:

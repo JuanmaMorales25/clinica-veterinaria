@@ -1,0 +1,229 @@
+// Paleta y medidas tomadas del Figma. Rojo solo para alergias y lotes vencidos;
+// todo estado lleva color + icono + etiqueta.
+:root {
+  --color-fondo: #fafbfc;
+  --color-superficie: #ffffff;
+  --color-encabezado: #e7f0ea;
+  --color-marino: #123a4d;
+  --color-primario: #1f5e7c;
+  --color-primario-suave: #e6f0f5;
+  --color-texto: #1f2933;
+  --color-texto-suave: #5a6672;
+  --color-borde: #d3d9de;
+
+  --color-alerta: #a32219;
+  --color-alerta-fondo: #fbecea;
+  --color-exito: #2f6b4a;
+  --color-exito-fondo: #e6f2ea;
+  --color-advertencia: #8a5a00;
+  --color-advertencia-fondo: #fff4dc;
+
+  --fuente: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --texto-titulo: 27px;
+  --texto-seccion: 24px;
+  --texto-destacado: 20px;
+  --texto-cuerpo: 18px;
+  --texto-etiqueta: 17px;
+  --texto-meta: 16px;
+
+  --radio-tarjeta: 15px;
+  --radio-entrada: 11px;
+  --radio-boton: 8px;
+  --ancho-contenido: 762px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--fuente);
+  font-size: var(--texto-cuerpo);
+  line-height: 1.4;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--color-primario);
+}
+
+.contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  max-width: calc(var(--ancho-contenido) + 32px);
+  margin: 0 auto;
+  padding: 44px 16px 64px;
+}
+
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 27px;
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+}
+
+.tarjeta__titulo {
+  color: var(--color-primario);
+  font-size: var(--texto-seccion);
+  font-weight: 600;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 1;
+  min-width: 0;
+
+  label {
+    font-size: var(--texto-etiqueta);
+    font-weight: 500;
+  }
+}
+
+.fila-campos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+
+.entrada {
+  width: 100%;
+  min-height: 57px;
+  padding: 0 16px;
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-borde);
+  border-radius: var(--radio-entrada);
+  color: var(--color-texto);
+  font: inherit;
+  font-size: var(--texto-cuerpo);
+
+  &:focus-visible {
+    outline: 3px solid var(--color-primario-suave);
+    border-color: var(--color-primario);
+  }
+
+  &:disabled,
+  &[readonly] {
+    background: var(--color-fondo);
+    color: var(--color-texto-suave);
+  }
+}
+
+textarea.entrada {
+  min-height: 88px;
+  padding: 14px 16px;
+  resize: vertical;
+}
+
+.ayuda-error {
+  color: var(--color-alerta);
+  font-size: var(--texto-meta);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 27px;
+  border-radius: var(--radio-boton);
+  font: inherit;
+  font-size: var(--texto-destacado);
+  text-decoration: none;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-primario-suave);
+    outline-offset: 2px;
+  }
+}
+
+.boton--primario {
+  background: var(--color-primario);
+  border: 2px solid var(--color-primario);
+  color: var(--color-primario-suave);
+  font-weight: 500;
+}
+
+.boton--secundario {
+  background: var(--color-superficie);
+  border: 2px solid var(--color-primario);
+  color: var(--color-primario);
+  font-weight: 600;
+}
+
+.tabla {
+  width: 100%;
+  overflow: hidden;
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  border-collapse: separate;
+  border-spacing: 0;
+
+  th {
+    padding: 12px 16px;
+    background: var(--color-primario-suave);
+    color: var(--color-marino);
+    font-size: var(--texto-meta);
+    font-weight: 600;
+    text-align: left;
+  }
+
+  td {
+    padding: 15px 16px;
+    border-top: 1.5px solid var(--color-borde);
+    font-size: var(--texto-etiqueta);
+  }
+
+  tr.tabla__fila--advertencia td {
+    background: var(--color-advertencia-fondo);
+  }
+
+  tr.tabla__fila--alerta td {
+    background: var(--color-alerta-fondo);
+  }
+}
+
+.texto-suave {
+  color: var(--color-texto-suave);
+}
+
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
