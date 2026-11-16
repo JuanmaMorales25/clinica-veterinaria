@@ -69,6 +69,23 @@ class Mascota(ConId, ConFechaCreacion, Base):
         back_populates="mascota", cascade="all, delete-orphan"
     )
 
+    def describir_edad(self, hoy: date) -> str | None:
+        """Edad legible para las fichas: "6 meses", "1 año", "3 años"."""
+        if self.fecha_nacimiento is None:
+            return None
+        meses = (
+            (hoy.year - self.fecha_nacimiento.year) * 12 + hoy.month - self.fecha_nacimiento.month
+        )
+        if hoy.day < self.fecha_nacimiento.day:
+            meses -= 1
+        if meses < 1:
+            semanas = max((hoy - self.fecha_nacimiento).days // 7, 0)
+            return f"{semanas} semana" if semanas == 1 else f"{semanas} semanas"
+        if meses < 12:
+            return f"{meses} mes" if meses == 1 else f"{meses} meses"
+        anios = meses // 12
+        return f"{anios} año" if anios == 1 else f"{anios} años"
+
 
 class Alergia(ConId, Base):
     __tablename__ = "alergia"

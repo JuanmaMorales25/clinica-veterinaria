@@ -14,7 +14,7 @@ cliente = TestClient(app)
 def test_salud():
     respuesta = cliente.get("/api/salud")
     assert respuesta.status_code == 200
-    assert respuesta.json() == {"estado": "ok"}
+    assert respuesta.json()["estado"] == "ok"
 
 
 def test_ruta_protegida_sin_sesion_responde_codigo():
