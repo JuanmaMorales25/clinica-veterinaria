@@ -169,3 +169,13 @@ def test_edad_legible(dias, esperado):
 def test_datos_de_consulta_validan_signos_vitales():
     with pytest.raises(ValueError):
         DatosConsulta(temperatura=Decimal(80))
+
+
+def test_rn02_solo_el_veterinario_registra_y_cierra_la_atencion():
+    from app.modulos.atencion.rutas import clinico
+
+    assert clinico(VETERINARIA) is VETERINARIA
+    for rol in (Rol.ADMINISTRADOR, Rol.AUXILIAR, Rol.PROPIETARIO):
+        with pytest.raises(ErrorDeNegocio) as error:
+            clinico(Usuario(id=uuid.uuid4(), nombre="Otro", rol=rol))
+        assert error.value.codigo == "PERMISO_DENEGADO"
