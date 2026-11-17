@@ -220,6 +220,8 @@ export default class AgendarHorario {
   protected readonly cargando = signal(false);
   protected readonly enviando = signal(false);
   protected readonly error = signal<string | null>(null);
+  /** Solo cuenta la respuesta de la última consulta de horarios (al cambiar de día rápido). */
+  private consultaActual = 0;
   protected readonly mascotas = signal<MascotaAgendada[]>([]);
   protected readonly servicios = signal<ServicioAgendado[]>([]);
   protected readonly mascota = computed(
@@ -305,8 +307,10 @@ export default class AgendarHorario {
     this.cargando.set(true);
     this.error.set(null);
     this.seleccionado.set(null);
+    const consulta = ++this.consultaActual;
     this.agenda.horarios(this.dia, this.servicioId).subscribe({
       next: (horarios) => {
+        if (consulta !== this.consultaActual) return;
         this.horarios.set(horarios);
         // B1: se preselecciona el horario sugerido más cercano.
         const cercano = sugerencias[0];
@@ -317,6 +321,7 @@ export default class AgendarHorario {
         this.cargando.set(false);
       },
       error: (error: unknown) => {
+        if (consulta !== this.consultaActual) return;
         this.error.set(leerErrorApi(error).mensaje);
         this.cargando.set(false);
       },
