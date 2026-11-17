@@ -43,6 +43,12 @@ export interface DetalleComprobante {
   subtotal: number;
 }
 
+export interface AlertaStock {
+  producto: string;
+  disponible: number;
+  minimo: number;
+}
+
 export interface Comprobante {
   id: string;
   numero: string;
@@ -62,6 +68,7 @@ export interface Comprobante {
   anulada_en: string | null;
   anulada_por: string | null;
   motivo_anulacion: string | null;
+  alertas_stock: AlertaStock[];
 }
 
 export interface CuentaDeCobro {

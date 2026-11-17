@@ -74,6 +74,15 @@ class CuentaDeCobro:
 
 
 @dataclass(frozen=True)
+class AlertaStock:
+    """Producto que quedó por debajo del stock mínimo después de descontar lo usado."""
+
+    producto: str
+    disponible: int
+    minimo: int
+
+
+@dataclass(frozen=True)
 class DatosPago:
     medio: MedioPago
     valor_recibido: Decimal | None = None
@@ -358,6 +367,22 @@ class CierreAtencionFacade:
             self.uow.revertir()
             raise
         return factura
+
+    def alertas_stock(self, factura: Factura, dia: date) -> list[AlertaStock]:
+        """Productos de la factura cuya existencia vigente quedó por debajo del stock mínimo."""
+        alertas: dict[uuid.UUID, AlertaStock] = {}
+        for detalle in factura.detalles:
+            if detalle.lote_id is None:
+                continue
+            producto = self.existencias.obtener_lote(detalle.lote_id).producto
+            if producto.id in alertas or not producto.stock_minimo:
+                continue
+            disponible = self.existencias.existencia_disponible(producto.id, dia)
+            if disponible < producto.stock_minimo:
+                alertas[producto.id] = AlertaStock(
+                    producto.nombre, disponible, producto.stock_minimo
+                )
+        return list(alertas.values())
 
     def _consulta_cerrada(self, id_consulta: uuid.UUID) -> Consulta:
         consulta = self.consultas.obtener(id_consulta)

@@ -94,7 +94,7 @@ def facturar_atencion(
     factura = fachada.facturar_atencion(
         id_consulta, usuario, DatosPago(datos.medio, datos.valor_recibido), simular_falla=simular
     )
-    return factura_a_salida(factura, hoy())
+    return factura_a_salida(factura, hoy(), fachada.alertas_stock(factura, hoy()))
 
 
 @router.get("/consultas/{id_consulta}/factura", response_model=ComprobanteSalida)
@@ -106,7 +106,7 @@ def factura_de_consulta(
     factura = fachada.facturacion.de_consulta(id_consulta)
     if factura is None:
         raise ErrorDeNegocio("FACTURA_NO_ENCONTRADA", "La atención todavía no tiene factura.", 404)
-    return factura_a_salida(factura, hoy())
+    return factura_a_salida(factura, hoy(), fachada.alertas_stock(factura, hoy()))
 
 
 @router.post("/facturas/{id_factura}/anular", response_model=ComprobanteSalida)
@@ -117,7 +117,7 @@ def anular_factura(
     fachada: CierreAtencionFacade = Depends(obtener_fachada),
 ):
     factura = fachada.anular_factura(id_factura, datos.motivo, usuario)
-    return factura_a_salida(factura, hoy())
+    return factura_a_salida(factura, hoy(), fachada.alertas_stock(factura, hoy()))
 
 
 @router.get("/facturas/{id_factura}/pdf", response_class=Response)

@@ -113,3 +113,8 @@ def test_descontar_valida_las_reglas_antes_de_tocar_el_saldo():
         servicio.descontar(id_lote, 1, uuid.uuid4(), HOY)
     assert servicio.lotes.lotes[id_lote].cantidad_disponible == 2
     assert servicio.lotes.movimientos == []
+
+
+def test_existencia_disponible_solo_cuenta_lotes_vigentes():
+    servicio = inventario(VENCIDO, VIGENTE, lote("L-3000", 10, date(2027, 9, 1)))
+    assert servicio.existencia_disponible(OMEPRAZOL.id, HOY) == 13

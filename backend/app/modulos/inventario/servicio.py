@@ -33,6 +33,9 @@ class ConsultaExistencias(ABC):
     @abstractmethod
     def lotes_vigentes(self, id_producto: uuid.UUID, hoy: date) -> list[Lote]: ...
 
+    @abstractmethod
+    def existencia_disponible(self, id_producto: uuid.UUID, hoy: date) -> int: ...
+
 
 class DescuentoInventario(ABC):
     """Escritura del inventario que hace el cierre de la atención."""
@@ -129,6 +132,9 @@ class ServicioInventario(ConsultaExistencias, DescuentoInventario):
 
     def lotes_vigentes(self, id_producto: uuid.UUID, hoy: date) -> list[Lote]:
         return self.lotes.lotes_vigentes(id_producto, hoy)
+
+    def existencia_disponible(self, id_producto: uuid.UUID, hoy: date) -> int:
+        return sum(lote.cantidad_disponible for lote in self.lotes_vigentes(id_producto, hoy))
 
     # --- DescuentoInventario ---
 
