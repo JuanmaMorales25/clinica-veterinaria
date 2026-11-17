@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 from app.core.db import SesionLocal, ahora
 from app.core.seguridad import cifrar_contrasena
 from app.modulos.acceso.modelos import Rol, Usuario
-from app.modulos.agenda.modelos import Cita, EstadoCita, Servicio
+from app.modulos.agenda.modelos import Cita, EstadoCitaValor, Servicio
 from app.modulos.atencion.modelos import (
     Consulta,
     EsquemaVacunacion,
@@ -364,21 +364,21 @@ def sembrar(sesion: Session) -> bool:
                 servicio=consulta_general,
                 veterinario=veterinaria,
                 fecha_hora=a_las(hoy, 10, 30),
-                estado=EstadoCita.CONFIRMADA,
+                estado=EstadoCitaValor.CONFIRMADA,
             ),
             Cita(
                 mascota=almendra,
                 servicio=consulta_general,
                 veterinario=veterinaria,
                 fecha_hora=a_las(dia_cita, 9, 0),
-                estado=EstadoCita.CONFIRMADA,
+                estado=EstadoCitaValor.CONFIRMADA,
             ),
             Cita(
                 mascota=luna,
                 servicio=vacunacion,
                 veterinario=veterinaria,
                 fecha_hora=a_las(dia_cita, 11, 0),
-                estado=EstadoCita.PENDIENTE,
+                estado=EstadoCitaValor.PENDIENTE,
             ),
         ]
     )

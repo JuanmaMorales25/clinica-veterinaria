@@ -77,5 +77,5 @@ def _enviar_por_http(
 
 
 def _credenciales(auth: str) -> tuple[str, str] | None:
-    usuario, _, clave = auth.partition(":")
-    return (usuario, clave) if usuario and clave else None
+    usuario, separador, clave = auth.partition(":")
+    return (usuario, clave) if separador and usuario and clave else None

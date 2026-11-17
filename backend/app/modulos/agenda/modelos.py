@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from app.modulos.pacientes.modelos import Mascota
 
 
-class EstadoCita(StrEnum):
+class EstadoCitaValor(StrEnum):
     PENDIENTE = "PENDIENTE"
     CONFIRMADA = "CONFIRMADA"
     ATENDIDA = "ATENDIDA"
@@ -41,9 +41,28 @@ class Cita(ConId, ConFechaCreacion, Base):
     veterinario_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("usuario.id"))
     fecha_hora: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
     # La columna guarda el nombre del estado; el comportamiento de cada estado vive en el patrón State.
-    estado: Mapped[EstadoCita] = mapped_column(tipo_enum(EstadoCita), default=EstadoCita.PENDIENTE)
+    estado: Mapped[EstadoCitaValor] = mapped_column(
+        tipo_enum(EstadoCitaValor), default=EstadoCitaValor.PENDIENTE
+    )
     motivo_cancelacion: Mapped[str | None] = mapped_column(String(255))
 
     mascota: Mapped["Mascota"] = relationship()
     servicio: Mapped[Servicio] = relationship()
     veterinario: Mapped["Usuario | None"] = relationship()
+
+    def _estado_actual(self):
+        from app.modulos.agenda.estado import obtener_estado
+
+        return obtener_estado(self.estado)
+
+    def confirmar(self) -> None:
+        self._estado_actual().confirmar(self)
+
+    def cancelar(self, motivo: str) -> None:
+        self._estado_actual().cancelar(self, motivo)
+
+    def marcar_atendida(self) -> None:
+        self._estado_actual().marcar_atendida(self)
+
+    def marcar_no_asistida(self) -> None:
+        self._estado_actual().marcar_no_asistida(self)
