@@ -16,7 +16,9 @@ import { MascotaAgendada } from '../agenda.modelos';
       <p class="paso">PASO 1 DE 3</p>
       <h2 class="titulo-pagina">¿Para cuál mascota?</h2>
       <p class="texto-suave">Elige una mascota para continuar con la solicitud.</p>
-      @if (error()) { <p class="ayuda-error" role="alert">{{ error() }}</p> }
+      @if (error()) {
+        <p class="ayuda-error" role="alert">{{ error() }}</p>
+      }
       <div class="lista">
         @for (mascota of mascotas(); track mascota.id) {
           <button class="mascota tarjeta" type="button" (click)="elegir(mascota)">
@@ -35,7 +37,13 @@ import { MascotaAgendada } from '../agenda.modelos';
         <h3 class="tarjeta__titulo">Vincular otra mascota</h3>
         <label class="campo">
           <span>Número de historia</span>
-          <input class="entrada" name="historia" required [(ngModel)]="historia" placeholder="HC-00481" />
+          <input
+            class="entrada"
+            name="historia"
+            required
+            [(ngModel)]="historia"
+            placeholder="HC-00481"
+          />
         </label>
         <button class="boton boton--secundario" type="submit" [disabled]="guardando()">
           {{ guardando() ? 'Buscando…' : 'Buscar por historia' }}
@@ -45,14 +53,45 @@ import { MascotaAgendada } from '../agenda.modelos';
     </main>
   `,
   styles: `
-    .paso { color: var(--color-primario); font-size: var(--texto-meta); font-weight: 700; }
-    .lista { display: grid; gap: 12px; }
-    .mascota { width: 100%; flex-direction: row; align-items: center; text-align: left; cursor: pointer; }
-    .mascota__icono { display: grid; place-items: center; width: 50px; height: 50px; border-radius: 50%; background: var(--color-primario-suave); }
-    .mascota__datos { display: grid; flex: 1; gap: 4px; }
-    .mascota__datos span { color: var(--color-texto-suave); font-size: var(--texto-meta); }
-    .vincular { margin-top: 10px; }
-    .volver { align-self: flex-start; }
+    .paso {
+      color: var(--color-primario);
+      font-size: var(--texto-meta);
+      font-weight: 700;
+    }
+    .lista {
+      display: grid;
+      gap: 12px;
+    }
+    .mascota {
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      text-align: left;
+      cursor: pointer;
+    }
+    .mascota__icono {
+      display: grid;
+      place-items: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--color-primario-suave);
+    }
+    .mascota__datos {
+      display: grid;
+      flex: 1;
+      gap: 4px;
+    }
+    .mascota__datos span {
+      color: var(--color-texto-suave);
+      font-size: var(--texto-meta);
+    }
+    .vincular {
+      margin-top: 10px;
+    }
+    .volver {
+      align-self: flex-start;
+    }
   `,
 })
 export default class AgendarMascota {

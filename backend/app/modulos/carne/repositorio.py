@@ -3,7 +3,6 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from app.modulos.acceso.modelos import Usuario
 from app.modulos.atencion.modelos import Consulta, Vacunacion
 from app.modulos.pacientes.modelos import Mascota, Propietario
 

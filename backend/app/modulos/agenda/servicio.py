@@ -9,7 +9,6 @@ from app.core.config import obtener_configuracion
 from app.core.db import ahora
 from app.core.errores import ErrorDeNegocio
 from app.modulos.acceso.modelos import Rol, Usuario
-from app.modulos.agenda.estado import TransicionNoPermitida
 from app.modulos.agenda.esquemas import (
     CitaAgendaSalida,
     HorarioDisponible,
@@ -18,6 +17,7 @@ from app.modulos.agenda.esquemas import (
     SolicitudCancelarCita,
     SolicitudCita,
 )
+from app.modulos.agenda.estado import TransicionNoPermitida
 from app.modulos.agenda.modelos import Cita, EstadoCitaValor, Servicio
 from app.modulos.agenda.repositorio import RepositorioAgenda
 from app.modulos.notificaciones.modelos import EstadoRecordatorio, Recordatorio, TipoRecordatorio
@@ -35,7 +35,10 @@ class ServicioAgenda:
 
     def mascotas(self, usuario: Usuario) -> list[MascotaAgendaSalida]:
         propietario = self._propietario(usuario.id)
-        return [self._salida_mascota(mascota) for mascota in self.repositorio.mascotas_de(propietario.id)]
+        return [
+            self._salida_mascota(mascota)
+            for mascota in self.repositorio.mascotas_de(propietario.id)
+        ]
 
     def vincular_mascota(self, usuario: Usuario, numero_historia: str) -> MascotaAgendaSalida:
         propietario = self._propietario(usuario.id)
@@ -55,9 +58,7 @@ class ServicioAgenda:
             for servicio in self.repositorio.servicios_activos()
         ]
 
-    def horarios(
-        self, dia: date, servicio_id: uuid.UUID
-    ) -> list[HorarioDisponible]:
+    def horarios(self, dia: date, servicio_id: uuid.UUID) -> list[HorarioDisponible]:
         zona = ZoneInfo(obtener_configuracion().zona_horaria)
         servicio = self._servicio_activo(servicio_id)
         veterinarios = self.repositorio.veterinarios()
@@ -147,7 +148,13 @@ class ServicioAgenda:
         if cita.veterinario_id is not None:
             self.repositorio.veterinario(cita.veterinario_id, bloquear=True)
             zona = ZoneInfo(obtener_configuracion().zona_horaria)
-            otras = [c for c in self.repositorio.citas_del_dia(cita.fecha_hora.astimezone(zona).date(), zona) if c.id != cita.id]
+            otras = [
+                c
+                for c in self.repositorio.citas_del_dia(
+                    cita.fecha_hora.astimezone(zona).date(), zona
+                )
+                if c.id != cita.id
+            ]
             conflicto = any(
                 c.estado == EstadoCitaValor.CONFIRMADA
                 and c.veterinario_id == cita.veterinario_id

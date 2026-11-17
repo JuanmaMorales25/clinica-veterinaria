@@ -21,14 +21,25 @@ function fechaLocal(valor: Date): string {
     <main class="contenido">
       <p class="paso">PASO 3 DE 3</p>
       <h2 class="titulo-pagina">Elige cuándo venir</h2>
-      <p class="texto-suave">La cita quedará pendiente hasta que el personal de la clínica la confirme.</p>
+      <p class="texto-suave">
+        La cita quedará pendiente hasta que el personal de la clínica la confirme.
+      </p>
 
       <label class="campo fecha">
         <span>Fecha de atención</span>
-        <input class="entrada" type="date" name="dia" [min]="hoy" [(ngModel)]="dia" (ngModelChange)="cargarHorarios()" />
+        <input
+          class="entrada"
+          type="date"
+          name="dia"
+          [min]="hoy"
+          [(ngModel)]="dia"
+          (ngModelChange)="cargarHorarios()"
+        />
       </label>
 
-      @if (error()) { <p class="ayuda-error" role="alert">{{ error() }}</p> }
+      @if (error()) {
+        <p class="ayuda-error" role="alert">{{ error() }}</p>
+      }
       @if (sugerencias().length) {
         <aside class="aviso" role="status">
           <strong>Ese horario ya no está disponible.</strong>
@@ -36,7 +47,7 @@ function fechaLocal(valor: Date): string {
           <div class="horarios horarios--sugeridos">
             @for (sugerencia of sugerencias(); track sugerencia) {
               <button type="button" class="horario" (click)="elegirSugerencia(sugerencia)">
-                {{ sugerencia | date:'h:mm a' }}
+                {{ sugerencia | date: 'h:mm a' }}
               </button>
             }
           </div>
@@ -54,10 +65,12 @@ function fechaLocal(valor: Date): string {
               [class.horario--seleccionado]="seleccionado()?.fecha_hora === horario.fecha_hora"
               (click)="seleccionar(horario)"
             >
-              {{ horario.fecha_hora | date:'h:mm a' }}
+              {{ horario.fecha_hora | date: 'h:mm a' }}
             </button>
           } @empty {
-            <p class="texto-suave">No hay horarios disponibles para esa fecha. Prueba otro día hábil.</p>
+            <p class="texto-suave">
+              No hay horarios disponibles para esa fecha. Prueba otro día hábil.
+            </p>
           }
         </div>
       }
@@ -65,8 +78,16 @@ function fechaLocal(valor: Date): string {
       @if (seleccionado()) {
         <section class="tarjeta resumen">
           <h3 class="tarjeta__titulo">Resumen de la solicitud</h3>
-          <p>{{ seleccionado()?.fecha_hora | date:'EEEE d MMMM, h:mm a' }} · {{ seleccionado()?.veterinario }}</p>
-          <button class="boton boton--primario" type="button" [disabled]="enviando()" (click)="solicitar()">
+          <p>
+            {{ seleccionado()?.fecha_hora | date: 'EEEE d MMMM, h:mm a' }} ·
+            {{ seleccionado()?.veterinario }}
+          </p>
+          <button
+            class="boton boton--primario"
+            type="button"
+            [disabled]="enviando()"
+            (click)="solicitar()"
+          >
             {{ enviando() ? 'Enviando…' : 'Solicitar cita' }}
           </button>
         </section>
@@ -75,14 +96,50 @@ function fechaLocal(valor: Date): string {
     </main>
   `,
   styles: `
-    .paso { color: var(--color-primario); font-size: var(--texto-meta); font-weight: 700; }
-    .fecha { max-width: 360px; }
-    .horarios { display: flex; flex-wrap: wrap; gap: 10px; }
-    .horario { min-width: 105px; min-height: 48px; padding: 8px 16px; border: 1.5px solid var(--color-borde); border-radius: 9px; background: white; color: var(--color-texto); font: inherit; cursor: pointer; }
-    .horario--seleccionado { border: 2px solid var(--color-primario); background: var(--color-primario-suave); color: var(--color-marino); font-weight: 700; }
-    .aviso { display: grid; gap: 5px; padding: 15px 18px; border-radius: 10px; background: var(--color-advertencia-fondo); color: var(--color-advertencia); }
-    .resumen { border-color: var(--color-primario); }
-    .volver { align-self: flex-start; }
+    .paso {
+      color: var(--color-primario);
+      font-size: var(--texto-meta);
+      font-weight: 700;
+    }
+    .fecha {
+      max-width: 360px;
+    }
+    .horarios {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .horario {
+      min-width: 105px;
+      min-height: 48px;
+      padding: 8px 16px;
+      border: 1.5px solid var(--color-borde);
+      border-radius: 9px;
+      background: white;
+      color: var(--color-texto);
+      font: inherit;
+      cursor: pointer;
+    }
+    .horario--seleccionado {
+      border: 2px solid var(--color-primario);
+      background: var(--color-primario-suave);
+      color: var(--color-marino);
+      font-weight: 700;
+    }
+    .aviso {
+      display: grid;
+      gap: 5px;
+      padding: 15px 18px;
+      border-radius: 10px;
+      background: var(--color-advertencia-fondo);
+      color: var(--color-advertencia);
+    }
+    .resumen {
+      border-color: var(--color-primario);
+    }
+    .volver {
+      align-self: flex-start;
+    }
   `,
 })
 export default class AgendarHorario {

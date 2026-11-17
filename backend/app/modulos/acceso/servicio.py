@@ -136,9 +136,7 @@ class ServicioAcceso:
             configuracion.jwt_secreto,
             algorithm=configuracion.jwt_algoritmo,
         )
-        enlace = (
-            f"{configuracion.url_frontend.rstrip('/')}/acceso/restablecer?token={token}"
-        )
+        enlace = f"{configuracion.url_frontend.rstrip('/')}/acceso/restablecer?token={token}"
         try:
             from app.core.correo import enviar_correo
 
