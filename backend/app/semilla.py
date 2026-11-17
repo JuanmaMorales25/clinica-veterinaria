@@ -11,7 +11,8 @@ from decimal import Decimal
 from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
-from app.core.db import SesionLocal, ahora
+from app import modelos  # noqa: F401  (registra todas las tablas para reiniciar)
+from app.core.db import Base, SesionLocal, ahora
 from app.core.seguridad import cifrar_contrasena
 from app.modulos.acceso.modelos import Rol, Usuario
 from app.modulos.agenda.modelos import Cita, EstadoCitaValor, Servicio
@@ -23,6 +24,7 @@ from app.modulos.atencion.modelos import (
     Vacunacion,
 )
 from app.modulos.facturacion.modelos import (
+    CONSECUTIVO_FACTURA,
     DetalleFactura,
     Factura,
     MedioPago,
@@ -385,6 +387,15 @@ def sembrar(sesion: Session) -> bool:
 
     sesion.commit()
     return True
+
+
+def reiniciar(sesion: Session) -> None:
+    """Borra todos los datos y vuelve a cargar la demostración con las fechas de hoy."""
+    tablas = ", ".join(f'"{tabla.name}"' for tabla in Base.metadata.sorted_tables)
+    sesion.execute(text(f"TRUNCATE TABLE {tablas} RESTART IDENTITY CASCADE"))
+    sesion.execute(text(f"ALTER SEQUENCE {CONSECUTIVO_FACTURA.name} RESTART WITH 1"))
+    sesion.commit()
+    sembrar(sesion)
 
 
 if __name__ == "__main__":

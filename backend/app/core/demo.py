@@ -7,12 +7,13 @@ from datetime import timedelta
 
 import jwt
 from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
 from app.core.config import obtener_configuracion
-from app.core.db import ahora
+from app.core.db import ahora, obtener_sesion
 from app.core.errores import ErrorDeNegocio
-from app.core.seguridad import obtener_usuario_actual
-from app.modulos.acceso.modelos import Usuario
+from app.core.seguridad import obtener_usuario_actual, requiere_rol
+from app.modulos.acceso.modelos import Rol, Usuario
 
 
 def requiere_modo_demo() -> None:
@@ -23,6 +24,8 @@ def requiere_modo_demo() -> None:
 router = APIRouter(
     prefix="/demo", tags=["Demostración"], dependencies=[Depends(requiere_modo_demo)]
 )
+
+administrador = requiere_rol(Rol.ADMINISTRADOR)
 
 
 @router.post("/sesion-expirada")
@@ -45,3 +48,13 @@ def crear_enlace_vencido_demo() -> dict[str, str]:
         algorithm=configuracion.jwt_algoritmo,
     )
     return {"token": token}
+
+
+@router.post("/reiniciar", status_code=204)
+def reiniciar_datos(
+    _: Usuario = Depends(administrador), sesion: Session = Depends(obtener_sesion)
+) -> None:
+    """Vuelve a cargar los datos de demostración con las fechas de hoy (antes de la sustentación)."""
+    from app.semilla import reiniciar
+
+    reiniciar(sesion)
