@@ -123,9 +123,8 @@ Cada módulo del backend sigue el mismo esquema de archivos:
 | `servicio.py` | Reglas de negocio. Recibe repositorios por constructor. |
 | `rutas.py` | `router = APIRouter(prefix="/<modulo>")`. Se registra en `app/main.py`. |
 
-Cada pantalla del frontend es un componente independiente con carga diferida. Las rutas ya
-existen en `app.routes.ts` apuntando a `enConstruccion(...)`: al terminar una pantalla, se
-cambia esa línea por el `loadComponent` real.
+Cada pantalla del frontend es un componente independiente con carga diferida: cada ruta de
+`app.routes.ts` la carga con `loadComponent`.
 
 ### Piezas compartidas que ya existen
 
@@ -215,12 +214,13 @@ recordatorios → E2.
 - `POST /api/acceso/login` devuelve `{token, usuario}`. El token dura 30 minutos.
 - Cada respuesta autenticada trae la cabecera `X-Token-Renovado` y el interceptor la guarda,
   así que la sesión vence por **inactividad** (A4), no por tiempo total.
-- Backend: proteger rutas con `Depends(requiere_rol(Rol.VETERINARIO, ...))` o
-  `Depends(obtener_usuario_actual)`.
+- Backend: definir el rol una vez por módulo (`personal = requiere_rol(*ROLES_PERSONAL)`) y
+  proteger cada ruta con `Depends(personal)` o `Depends(obtener_usuario_actual)`. Llamar a
+  `requiere_rol` dentro de `Depends(...)` hace que ruff marque B008.
 - Frontend: `canActivate: [requiereRol('PROPIETARIO')]`. El personal entra a `/personal/pacientes`
   y el propietario a `/propietario`.
-- El login actual es la versión mínima. Pipe le agrega el conteo de intentos, el bloqueo, la
-  recuperación y el registro.
+- El inicio de sesión cuenta los intentos (A1), bloquea la cuenta al quinto (A2) y la
+  recuperación desbloquea la cuenta al cambiar la contraseña (A3).
 
 ## 7. Notificaciones
 
