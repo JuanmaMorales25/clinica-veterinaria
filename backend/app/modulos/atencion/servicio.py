@@ -6,6 +6,7 @@ from app.core.db import ahora
 from app.core.errores import ErrorDeNegocio
 from app.core.unidad_de_trabajo import UnidadDeTrabajo
 from app.modulos.acceso.modelos import Usuario
+from app.modulos.agenda.modelos import EstadoCitaValor
 from app.modulos.atencion.esquemas import (
     AlergiaSalida,
     AtencionFicha,
@@ -294,6 +295,9 @@ class ServicioAtencion:
         consulta.cerrada_en = ahora()
         for vacuna in consulta.vacunaciones:
             self.vacunacion.programar_aviso(vacuna, consulta.mascota)
+        # La cita del día con la que se abrió la consulta pasa a atendida (patrón State).
+        if consulta.cita is not None and consulta.cita.estado == EstadoCitaValor.CONFIRMADA:
+            consulta.cita.marcar_atendida()
         self.auditoria.registrar(usuario, "CERRAR_CONSULTA", "consulta", consulta.id)
         self.uow.confirmar()
 
