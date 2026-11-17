@@ -83,7 +83,9 @@ class ServicioAgenda:
                 ),
                 None,
             )
-            if veterinario is not None:
+            if veterinario is None:
+                disponibles.append(HorarioDisponible(fecha_hora=fecha_hora, disponible=False))
+            else:
                 disponibles.append(
                     HorarioDisponible(
                         fecha_hora=fecha_hora,
@@ -320,6 +322,8 @@ class ServicioAgenda:
             especie=mascota.especie,
             raza=mascota.raza,
             numero_historia=mascota.numero_historia,
+            edad=mascota.describir_edad(ahora().date()),
+            fotografia=mascota.fotografia,
         )
 
     @staticmethod

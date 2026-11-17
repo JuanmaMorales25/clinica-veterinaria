@@ -19,6 +19,9 @@ export interface CarnetMascota {
   alergias: AlergiaCarnet[];
   vacunas: VacunaCarnet[];
   proximas_dosis: VacunaCarnet[];
+  fotografia: string | null;
+  esquema_al_dia: boolean;
+  ultima_atencion: string | null;
 }
 
 export interface EnlaceCarne {

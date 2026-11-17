@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 
-export type TipoEstado = 'exito' | 'alerta' | 'advertencia' | 'info' | 'neutro';
+export type TipoEstado = 'exito' | 'alerta' | 'advertencia' | 'info' | 'neutro' | 'primario';
 
 export const ICONOS_ESTADO: Record<TipoEstado, string> = {
   exito: 'iconos/check.svg',
@@ -8,6 +8,7 @@ export const ICONOS_ESTADO: Record<TipoEstado, string> = {
   advertencia: 'iconos/abajo.svg',
   info: 'iconos/reloj-arena.svg',
   neutro: 'iconos/candado.svg',
+  primario: 'iconos/info.svg',
 };
 
 /** Píldora de estado: color + icono + etiqueta, como pide la guía de color del Figma. */
@@ -62,6 +63,11 @@ export const ICONOS_ESTADO: Record<TipoEstado, string> = {
       background: var(--color-info-fondo);
       border-color: var(--color-info);
       color: var(--color-info);
+    }
+    .estado--primario {
+      background: var(--color-primario-suave);
+      border-color: var(--color-primario);
+      color: var(--color-primario);
     }
     .estado--neutro {
       background: var(--color-neutro-fondo);

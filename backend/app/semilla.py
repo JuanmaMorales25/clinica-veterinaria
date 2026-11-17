@@ -124,6 +124,7 @@ def sembrar(sesion: Session) -> bool:
         sexo="Hembra",
         fecha_nacimiento=hoy - timedelta(days=380),
         peso=Decimal("0.15"),
+        fotografia="demo/almendra.jpg",
         propietario=maria,
     )
     luna = Mascota(

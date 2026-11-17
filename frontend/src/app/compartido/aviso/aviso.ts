@@ -58,6 +58,13 @@ import { ICONOS_ESTADO, TipoEstado } from '../estado-etiqueta/estado-etiqueta';
         color: var(--color-advertencia);
       }
     }
+    .aviso--primario {
+      background: var(--color-primario-suave);
+      border-color: var(--color-primario);
+      .aviso__titulo {
+        color: var(--color-marino);
+      }
+    }
     .aviso--info {
       background: var(--color-info-fondo);
       border-color: var(--color-info);

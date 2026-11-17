@@ -1,5 +1,5 @@
 import uuid
-from datetime import timedelta
+from datetime import date, timedelta
 from typing import NoReturn
 
 import jwt
@@ -121,8 +121,24 @@ class ServicioCarne:
             ],
             vacunas=historial,
             proximas_dosis=proximas,
+            fotografia=mascota.fotografia,
+            esquema_al_dia=_esquema_al_dia(historial, hoy),
+            ultima_atencion=ultima.date()
+            if (ultima := self.repositorio.ultima_atencion(mascota.id))
+            else None,
         )
 
     @staticmethod
     def _enlace_invalido() -> NoReturn:
         raise ErrorDeNegocio("ENLACE_INVALIDO", "El enlace del carné no es válido.", 404)
+
+
+def _esquema_al_dia(historial: list[VacunaCarnet], hoy: date) -> bool:
+    """Al día si la última dosis de cada biológico no tiene un refuerzo vencido."""
+    ultimas: dict[str, VacunaCarnet] = {}
+    for vacuna in historial:  # viene de la más reciente a la más antigua
+        ultimas.setdefault(vacuna.biologico, vacuna)
+    return all(
+        vacuna.fecha_proxima_dosis is None or vacuna.fecha_proxima_dosis >= hoy
+        for vacuna in ultimas.values()
+    )

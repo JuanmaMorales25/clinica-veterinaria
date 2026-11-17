@@ -4,6 +4,8 @@ export interface MascotaAgendada {
   especie: string;
   raza: string | null;
   numero_historia: string;
+  edad: string;
+  fotografia: string | null;
 }
 
 export interface ServicioAgendado {
@@ -16,8 +18,9 @@ export interface ServicioAgendado {
 
 export interface HorarioDisponible {
   fecha_hora: string;
-  veterinario_id: string;
-  veterinario: string;
+  disponible: boolean;
+  veterinario_id: string | null;
+  veterinario: string | null;
 }
 
 export type EstadoCita = 'PENDIENTE' | 'CONFIRMADA' | 'ATENDIDA' | 'CANCELADA' | 'NO_ASISTIDA';
