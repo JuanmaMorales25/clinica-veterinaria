@@ -56,7 +56,9 @@ class ServicioCarne:
             )
         except jwt.ExpiredSignatureError as error:
             raise ErrorDeNegocio(
-                "ENLACE_VENCIDO", "El enlace del carné venció. Solicita uno nuevo al propietario.", 410
+                "ENLACE_VENCIDO",
+                "El enlace del carné venció. Solicita uno nuevo al propietario.",
+                410,
             ) from error
         except jwt.InvalidTokenError as error:
             raise ErrorDeNegocio(

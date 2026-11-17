@@ -17,7 +17,6 @@ from app.modulos.notificaciones.esquemas import (
 from app.modulos.notificaciones.modelos import (
     EstadoRecordatorio,
     MensajeEnviado,
-    Recordatorio,
     TipoRecordatorio,
 )
 from app.modulos.notificaciones.repositorio import RepositorioNotificaciones
@@ -94,7 +93,9 @@ class ServicioNotificaciones:
             instante = instante.replace(tzinfo=zona)
         else:
             instante = instante.astimezone(zona)
-        for recordatorio, mascota, propietario, preferencia in self.repositorio.pendientes(instante):
+        for recordatorio, mascota, propietario, preferencia in self.repositorio.pendientes(
+            instante
+        ):
             recibir_recordatorios = preferencia is None or preferencia.recibir_recordatorios
             recordar_cita_desactivado = (
                 preferencia is not None
@@ -106,9 +107,7 @@ class ServicioNotificaciones:
                 recordatorio.ultimo_error = "Recordatorios desactivados por el propietario."
                 continue
 
-            hora_preferida = (
-                preferencia.hora_preferida if preferencia else HORA_AVISO_POR_DEFECTO
-            )
+            hora_preferida = preferencia.hora_preferida if preferencia else HORA_AVISO_POR_DEFECTO
             fecha_programada = recordatorio.fecha_programada
             if fecha_programada.tzinfo is None:
                 fecha_programada = fecha_programada.replace(tzinfo=zona)

@@ -11,11 +11,13 @@ from app.modulos.carne.servicio import ServicioCarne
 
 router = APIRouter(prefix="/carne", tags=["Carné digital"])
 
+propietario = requiere_rol(Rol.PROPIETARIO)
+
 
 @router.get("/mascotas/{mascota_id}", response_model=CarnetMascotaSalida)
 def ver_carne(
     mascota_id: uuid.UUID,
-    usuario: Usuario = Depends(requiere_rol(Rol.PROPIETARIO)),
+    usuario: Usuario = Depends(propietario),
     sesion: Session = Depends(obtener_sesion),
 ):
     return ServicioCarne(sesion).obtener_privado(mascota_id, usuario)
@@ -24,7 +26,7 @@ def ver_carne(
 @router.post("/mascotas/{mascota_id}/enlace", response_model=EnlaceCarneSalida)
 def crear_enlace(
     mascota_id: uuid.UUID,
-    usuario: Usuario = Depends(requiere_rol(Rol.PROPIETARIO)),
+    usuario: Usuario = Depends(propietario),
     sesion: Session = Depends(obtener_sesion),
 ):
     return ServicioCarne(sesion).crear_enlace(mascota_id, usuario)

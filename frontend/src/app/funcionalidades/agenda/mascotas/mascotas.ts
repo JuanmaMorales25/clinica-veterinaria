@@ -30,7 +30,9 @@ import { MascotaAgendada } from '../agenda.modelos';
             <div class="mascota__marca" aria-hidden="true">🐾</div>
             <div class="mascota__datos">
               <h3 class="tarjeta__titulo">{{ mascota.nombre }}</h3>
-              <p class="texto-suave">{{ mascota.especie }}{{ mascota.raza ? ' · ' + mascota.raza : '' }}</p>
+              <p class="texto-suave">
+                {{ mascota.especie }}{{ mascota.raza ? ' · ' + mascota.raza : '' }}
+              </p>
               <p class="texto-suave">Historia {{ mascota.numero_historia }}</p>
             </div>
             <a class="boton boton--secundario" [routerLink]="['/propietario/carne', mascota.id]">
@@ -51,14 +53,34 @@ import { MascotaAgendada } from '../agenda.modelos';
     </main>
   `,
   styles: `
-    .mascota { flex-direction: row; align-items: center; }
-    .mascota__marca {
-      display: grid; place-items: center; width: 62px; height: 62px; flex: 0 0 62px;
-      border-radius: 50%; background: var(--color-primario-suave); font-size: 28px;
+    .mascota {
+      flex-direction: row;
+      align-items: center;
     }
-    .mascota__datos { flex: 1; display: grid; gap: 5px; }
-    .enlace { align-self: flex-start; }
-    @media (max-width: 600px) { .mascota { align-items: flex-start; flex-wrap: wrap; } }
+    .mascota__marca {
+      display: grid;
+      place-items: center;
+      width: 62px;
+      height: 62px;
+      flex: 0 0 62px;
+      border-radius: 50%;
+      background: var(--color-primario-suave);
+      font-size: 28px;
+    }
+    .mascota__datos {
+      flex: 1;
+      display: grid;
+      gap: 5px;
+    }
+    .enlace {
+      align-self: flex-start;
+    }
+    @media (max-width: 600px) {
+      .mascota {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+    }
   `,
 })
 export default class MascotasPropietario {

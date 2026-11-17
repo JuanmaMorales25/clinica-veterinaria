@@ -23,7 +23,9 @@ class RepositorioUsuario:
             consulta = consulta.with_for_update()
         return self.sesion.scalar(consulta)
 
-    def propietario_por_documento(self, documento: str, bloquear: bool = False) -> Propietario | None:
+    def propietario_por_documento(
+        self, documento: str, bloquear: bool = False
+    ) -> Propietario | None:
         consulta = select(Propietario).where(Propietario.documento_identidad == documento)
         if bloquear:
             consulta = consulta.with_for_update()

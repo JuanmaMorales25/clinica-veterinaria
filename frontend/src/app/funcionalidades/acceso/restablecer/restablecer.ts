@@ -16,9 +16,7 @@ import { Encabezado } from '../../../compartido/encabezado/encabezado';
         @if (guardada()) {
           <h2 class="tarjeta__titulo">Contraseña actualizada</h2>
           <p class="texto-suave">Ya puedes iniciar sesión con tu nueva contraseña.</p>
-          <a class="boton boton--primario" routerLink="/acceso/iniciar-sesion">
-            Iniciar sesión
-          </a>
+          <a class="boton boton--primario" routerLink="/acceso/iniciar-sesion"> Iniciar sesión </a>
         } @else {
           <h2 class="tarjeta__titulo">Elige una contraseña nueva</h2>
           <div class="campo">

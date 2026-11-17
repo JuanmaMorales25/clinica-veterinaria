@@ -29,9 +29,7 @@ def registrar(datos: SolicitudRegistro, sesion: Session = Depends(obtener_sesion
 
 
 @router.post("/recuperar", response_model=RespuestaMensaje)
-def solicitar_recuperacion(
-    datos: SolicitudRecuperacion, sesion: Session = Depends(obtener_sesion)
-):
+def solicitar_recuperacion(datos: SolicitudRecuperacion, sesion: Session = Depends(obtener_sesion)):
     ServicioAcceso(sesion).solicitar_recuperacion(datos)
     return RespuestaMensaje(
         mensaje="Si la cuenta existe, enviaremos un enlace de recuperación a ese correo."
@@ -39,9 +37,7 @@ def solicitar_recuperacion(
 
 
 @router.post("/restablecer", response_model=RespuestaMensaje)
-def restablecer_contrasena(
-    datos: SolicitudRestablecer, sesion: Session = Depends(obtener_sesion)
-):
+def restablecer_contrasena(datos: SolicitudRestablecer, sesion: Session = Depends(obtener_sesion)):
     ServicioAcceso(sesion).restablecer_contrasena(datos)
     return RespuestaMensaje(mensaje="La contraseña se actualizó. Ya puedes iniciar sesión.")
 

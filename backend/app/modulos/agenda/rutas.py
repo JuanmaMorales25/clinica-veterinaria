@@ -1,5 +1,5 @@
-from datetime import date
 import uuid
+from datetime import date
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
@@ -20,10 +20,14 @@ from app.modulos.agenda.servicio import ServicioAgenda
 
 router = APIRouter(prefix="/agenda", tags=["Agenda"])
 
+propietario = requiere_rol(Rol.PROPIETARIO)
+personal = requiere_rol(*ROLES_PERSONAL)
+veterinario = requiere_rol(Rol.VETERINARIO)
+
 
 @router.get("/mascotas", response_model=list[MascotaAgendaSalida])
 def listar_mascotas(
-    usuario: Usuario = Depends(requiere_rol(Rol.PROPIETARIO)),
+    usuario: Usuario = Depends(propietario),
     sesion: Session = Depends(obtener_sesion),
 ):
     return ServicioAgenda(sesion).mascotas(usuario)
@@ -32,7 +36,7 @@ def listar_mascotas(
 @router.post("/mascotas/vincular", response_model=MascotaAgendaSalida)
 def vincular_mascota(
     datos: SolicitudVincularMascota,
-    usuario: Usuario = Depends(requiere_rol(Rol.PROPIETARIO)),
+    usuario: Usuario = Depends(propietario),
     sesion: Session = Depends(obtener_sesion),
 ):
     return ServicioAgenda(sesion).vincular_mascota(usuario, datos.numero_historia)
@@ -40,7 +44,7 @@ def vincular_mascota(
 
 @router.get("/servicios", response_model=list[ServicioAgendaSalida])
 def listar_servicios(
-    _: Usuario = Depends(requiere_rol(Rol.PROPIETARIO)),
+    _: Usuario = Depends(propietario),
     sesion: Session = Depends(obtener_sesion),
 ):
     return ServicioAgenda(sesion).servicios()
@@ -50,7 +54,7 @@ def listar_servicios(
 def listar_horarios(
     dia: date = Query(),
     servicio_id: uuid.UUID = Query(),
-    _: Usuario = Depends(requiere_rol(Rol.PROPIETARIO)),
+    _: Usuario = Depends(propietario),
     sesion: Session = Depends(obtener_sesion),
 ):
     return ServicioAgenda(sesion).horarios(dia, servicio_id)
@@ -59,7 +63,7 @@ def listar_horarios(
 @router.post("/citas", response_model=CitaAgendaSalida, status_code=201)
 def solicitar_cita(
     datos: SolicitudCita,
-    usuario: Usuario = Depends(requiere_rol(Rol.PROPIETARIO)),
+    usuario: Usuario = Depends(propietario),
     sesion: Session = Depends(obtener_sesion),
 ):
     return ServicioAgenda(sesion).solicitar_cita(usuario, datos)
@@ -67,7 +71,7 @@ def solicitar_cita(
 
 @router.get("/citas/pendientes", response_model=list[CitaAgendaSalida])
 def listar_citas_pendientes(
-    _: Usuario = Depends(requiere_rol(*ROLES_PERSONAL)),
+    _: Usuario = Depends(personal),
     sesion: Session = Depends(obtener_sesion),
 ):
     return ServicioAgenda(sesion).citas_pendientes()
@@ -76,7 +80,7 @@ def listar_citas_pendientes(
 @router.post("/citas/{cita_id}/confirmar", response_model=CitaAgendaSalida)
 def confirmar_cita(
     cita_id: uuid.UUID,
-    _: Usuario = Depends(requiere_rol(*ROLES_PERSONAL)),
+    _: Usuario = Depends(personal),
     sesion: Session = Depends(obtener_sesion),
 ):
     return ServicioAgenda(sesion).confirmar_cita(cita_id)
@@ -95,7 +99,7 @@ def cancelar_cita(
 @router.post("/citas/{cita_id}/atendida", response_model=CitaAgendaSalida)
 def marcar_atendida(
     cita_id: uuid.UUID,
-    _: Usuario = Depends(requiere_rol(Rol.VETERINARIO)),
+    _: Usuario = Depends(veterinario),
     sesion: Session = Depends(obtener_sesion),
 ):
     return ServicioAgenda(sesion).marcar_atendida(cita_id)
@@ -104,7 +108,7 @@ def marcar_atendida(
 @router.post("/citas/{cita_id}/no-asistida", response_model=CitaAgendaSalida)
 def marcar_no_asistida(
     cita_id: uuid.UUID,
-    _: Usuario = Depends(requiere_rol(Rol.VETERINARIO)),
+    _: Usuario = Depends(veterinario),
     sesion: Session = Depends(obtener_sesion),
 ):
     return ServicioAgenda(sesion).marcar_no_asistida(cita_id)

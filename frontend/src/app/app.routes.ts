@@ -76,7 +76,8 @@ export const routes: Routes = [
           {
             path: 'servicio/:mascotaId',
             title: 'Elige el servicio · Clínica Veterinaria',
-            loadComponent: () => import('./funcionalidades/agenda/agendar-servicio/agendar-servicio'),
+            loadComponent: () =>
+              import('./funcionalidades/agenda/agendar-servicio/agendar-servicio'),
           },
           {
             path: 'horario/:mascotaId/:servicioId',
@@ -86,7 +87,8 @@ export const routes: Routes = [
           {
             path: 'enviada',
             title: 'Solicitud enviada · Clínica Veterinaria',
-            loadComponent: () => import('./funcionalidades/agenda/solicitud-enviada/solicitud-enviada'),
+            loadComponent: () =>
+              import('./funcionalidades/agenda/solicitud-enviada/solicitud-enviada'),
           },
         ],
       },

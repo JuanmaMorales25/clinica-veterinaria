@@ -20,12 +20,7 @@ export interface HorarioDisponible {
   veterinario: string;
 }
 
-export type EstadoCita =
-  | 'PENDIENTE'
-  | 'CONFIRMADA'
-  | 'ATENDIDA'
-  | 'CANCELADA'
-  | 'NO_ASISTIDA';
+export type EstadoCita = 'PENDIENTE' | 'CONFIRMADA' | 'ATENDIDA' | 'CANCELADA' | 'NO_ASISTIDA';
 
 export interface CitaAgendada {
   id: string;

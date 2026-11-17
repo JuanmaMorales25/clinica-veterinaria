@@ -14,9 +14,9 @@ from app.core.seguridad import CABECERA_TOKEN_RENOVADO
 from app.modulos.acceso.rutas import router as rutas_acceso
 from app.modulos.agenda.rutas import router as rutas_agenda
 from app.modulos.atencion.rutas import router as rutas_atencion
+from app.modulos.carne.rutas import router as rutas_carne
 from app.modulos.facturacion.rutas import router as rutas_facturacion
 from app.modulos.inventario.rutas import router as rutas_inventario
-from app.modulos.carne.rutas import router as rutas_carne
 from app.modulos.notificaciones.rutas import router as rutas_notificaciones
 from app.modulos.notificaciones.tarea import procesar_recordatorios_programados
 
@@ -41,6 +41,7 @@ async def ciclo_de_vida(_: FastAPI):
     finally:
         if programador.running:
             programador.shutdown(wait=False)
+
 
 app = FastAPI(
     title="API Clínica Veterinaria",

@@ -21,7 +21,12 @@ import { CarnetMascota } from '../carne.modelos';
     <cv-encabezado titulo="Carné digital" [rutaAtras]="rutaAtras" />
     <main class="contenido">
       @if (error()) {
-        <cv-aviso tipo="alerta" [titulo]="codigoError() === 'ENLACE_VENCIDO' ? 'Este enlace venció' : 'No se pudo abrir el carné'">
+        <cv-aviso
+          tipo="alerta"
+          [titulo]="
+            codigoError() === 'ENLACE_VENCIDO' ? 'Este enlace venció' : 'No se pudo abrir el carné'
+          "
+        >
           <p>{{ error() }}</p>
         </cv-aviso>
         @if (codigoError() === 'ENLACE_VENCIDO') {
@@ -36,7 +41,9 @@ import { CarnetMascota } from '../carne.modelos';
           <div class="identidad__datos">
             <p class="sobrelinea">{{ ficha.especie }}{{ ficha.raza ? ' · ' + ficha.raza : '' }}</p>
             <h2 class="titulo-pagina">{{ ficha.nombre }}</h2>
-            <p class="texto-suave">Historia clínica {{ ficha.numero_historia }}{{ ficha.edad ? ' · ' + ficha.edad : '' }}</p>
+            <p class="texto-suave">
+              Historia clínica {{ ficha.numero_historia }}{{ ficha.edad ? ' · ' + ficha.edad : '' }}
+            </p>
           </div>
         </section>
 
@@ -48,7 +55,9 @@ import { CarnetMascota } from '../carne.modelos';
             }
           </div>
           @for (alergia of ficha.alergias; track alergia.descripcion) {
-            <div class="dato-alergia"><strong>{{ alergia.descripcion }}</strong><span>{{ alergia.severidad }}</span></div>
+            <div class="dato-alergia">
+              <strong>{{ alergia.descripcion }}</strong><span>{{ alergia.severidad }}</span>
+            </div>
           } @empty {
             <p class="texto-suave">No hay alergias registradas.</p>
           }
@@ -56,10 +65,13 @@ import { CarnetMascota } from '../carne.modelos';
 
         <section class="tarjeta">
           <h3 class="tarjeta__titulo">Próximas dosis</h3>
-          @for (vacuna of ficha.proximas_dosis; track vacuna.biologico + vacuna.fecha_proxima_dosis) {
+          @for (
+            vacuna of ficha.proximas_dosis;
+            track vacuna.biologico + vacuna.fecha_proxima_dosis
+          ) {
             <div class="fila-dato">
               <strong>{{ vacuna.biologico }}</strong>
-              <span>{{ vacuna.fecha_proxima_dosis | date:'d MMMM y' }}</span>
+              <span>{{ vacuna.fecha_proxima_dosis | date: 'd MMMM y' }}</span>
             </div>
           } @empty {
             <p class="texto-suave">No hay dosis próximas registradas.</p>
@@ -71,7 +83,7 @@ import { CarnetMascota } from '../carne.modelos';
           @for (vacuna of ficha.vacunas; track vacuna.biologico + vacuna.fecha_aplicacion) {
             <div class="fila-dato">
               <strong>{{ vacuna.biologico }}</strong>
-              <span>Aplicada {{ vacuna.fecha_aplicacion | date:'d MMMM y' }}</span>
+              <span>Aplicada {{ vacuna.fecha_aplicacion | date: 'd MMMM y' }}</span>
             </div>
           } @empty {
             <p class="texto-suave">Aún no hay vacunas registradas.</p>
@@ -81,8 +93,15 @@ import { CarnetMascota } from '../carne.modelos';
         @if (!publico()) {
           <section class="tarjeta compartir">
             <h3 class="tarjeta__titulo">Compartir carné</h3>
-            <p class="texto-suave">El enlace firmado vence en 24 horas y permite consultar esta ficha.</p>
-            <button class="boton boton--secundario" type="button" [disabled]="generando()" (click)="generarEnlace()">
+            <p class="texto-suave">
+              El enlace firmado vence en 24 horas y permite consultar esta ficha.
+            </p>
+            <button
+              class="boton boton--secundario"
+              type="button"
+              [disabled]="generando()"
+              (click)="generarEnlace()"
+            >
               {{ generando() ? 'Generando…' : 'Generar enlace seguro' }}
             </button>
             @if (enlace()) {
@@ -94,16 +113,30 @@ import { CarnetMascota } from '../carne.modelos';
                     width="220"
                     height="220"
                   />
-                  <figcaption>Escanea el código para abrir el carné durante las próximas 24 horas.</figcaption>
-                  <a class="boton boton--secundario" [href]="imagenQr" [download]="'carne-' + ficha.numero_historia + '.png'">
+                  <figcaption>
+                    Escanea el código para abrir el carné durante las próximas 24 horas.
+                  </figcaption>
+                  <a
+                    class="boton boton--secundario"
+                    [href]="imagenQr"
+                    [download]="'carne-' + ficha.numero_historia + '.png'"
+                  >
                     Descargar código QR
                   </a>
                 </figure>
               }
-              <a class="enlace-compartido" [href]="enlace()" target="_blank" rel="noopener">{{ enlace() }}</a>
-              @if (errorCodigoQr()) { <p class="ayuda-error" role="alert">{{ errorCodigoQr() }}</p> }
-              <button class="boton boton--primario" type="button" (click)="copiarEnlace()">Copiar enlace</button>
-              @if (copiado()) { <p class="texto-suave" role="status">Enlace copiado.</p> }
+              <a class="enlace-compartido" [href]="enlace()" target="_blank" rel="noopener">{{
+                enlace()
+              }}</a>
+              @if (errorCodigoQr()) {
+                <p class="ayuda-error" role="alert">{{ errorCodigoQr() }}</p>
+              }
+              <button class="boton boton--primario" type="button" (click)="copiarEnlace()">
+                Copiar enlace
+              </button>
+              @if (copiado()) {
+                <p class="texto-suave" role="status">Enlace copiado.</p>
+              }
             }
           </section>
         }
@@ -111,19 +144,76 @@ import { CarnetMascota } from '../carne.modelos';
     </main>
   `,
   styles: `
-    .identidad { flex-direction: row; align-items: center; }
-    .identidad__icono { display: grid; place-items: center; width: 76px; height: 76px; flex: 0 0 76px; border-radius: 18px; background: var(--color-primario-suave); font-size: 36px; }
-    .identidad__datos { display: grid; gap: 5px; }
-    .sobrelinea { color: var(--color-exito); font-size: var(--texto-meta); font-weight: 600; }
-    .seccion__titulo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
-    .dato-alergia, .fila-dato { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid var(--color-borde); }
-    .dato-alergia span { color: var(--color-alerta); }
-    .fila-dato span { color: var(--color-texto-suave); }
-    .compartir { align-items: flex-start; }
-    .codigo-qr { display: grid; justify-items: start; gap: 10px; margin: 0; }
-    .codigo-qr img { width: min(220px, 100%); height: auto; padding: 8px; border: 1px solid var(--color-borde); border-radius: 10px; background: white; }
-    .codigo-qr figcaption { max-width: 34rem; color: var(--color-texto-suave); font-size: var(--texto-meta); }
-    .enlace-compartido { overflow-wrap: anywhere; }
+    .identidad {
+      flex-direction: row;
+      align-items: center;
+    }
+    .identidad__icono {
+      display: grid;
+      place-items: center;
+      width: 76px;
+      height: 76px;
+      flex: 0 0 76px;
+      border-radius: 18px;
+      background: var(--color-primario-suave);
+      font-size: 36px;
+    }
+    .identidad__datos {
+      display: grid;
+      gap: 5px;
+    }
+    .sobrelinea {
+      color: var(--color-exito);
+      font-size: var(--texto-meta);
+      font-weight: 600;
+    }
+    .seccion__titulo {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .dato-alergia,
+    .fila-dato {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 0;
+      border-top: 1px solid var(--color-borde);
+    }
+    .dato-alergia span {
+      color: var(--color-alerta);
+    }
+    .fila-dato span {
+      color: var(--color-texto-suave);
+    }
+    .compartir {
+      align-items: flex-start;
+    }
+    .codigo-qr {
+      display: grid;
+      justify-items: start;
+      gap: 10px;
+      margin: 0;
+    }
+    .codigo-qr img {
+      width: min(220px, 100%);
+      height: auto;
+      padding: 8px;
+      border: 1px solid var(--color-borde);
+      border-radius: 10px;
+      background: white;
+    }
+    .codigo-qr figcaption {
+      max-width: 34rem;
+      color: var(--color-texto-suave);
+      font-size: var(--texto-meta);
+    }
+    .enlace-compartido {
+      overflow-wrap: anywhere;
+    }
   `,
 })
 export default class CarneDigital {
