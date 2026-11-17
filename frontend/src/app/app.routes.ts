@@ -1,17 +1,7 @@
-import { Route, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
 import { requiereRol } from './core/autenticacion/guardias';
 import { ROLES_PERSONAL } from './core/autenticacion/modelos';
-
-/** Ruta temporal mientras se construye la pantalla real. */
-function enConstruccion(path: string, titulo: string): Route {
-  return {
-    path,
-    title: `${titulo} · Clínica Veterinaria`,
-    data: { titulo },
-    loadComponent: () => import('./compartido/pagina-en-construccion/pagina-en-construccion'),
-  };
-}
 
 export const routes: Routes = [
   {
