@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 
 import { environment } from '../../../../environments/environment';
 import { leerErrorApi } from '../../../core/api/error-api';
+import { Aviso } from '../../../compartido/aviso/aviso';
 import { Encabezado } from '../../../compartido/encabezado/encabezado';
 
 interface Preferencias {
@@ -25,7 +26,7 @@ const PREDETERMINADAS: Preferencias = {
 
 @Component({
   selector: 'cv-preferencias-notificacion',
-  imports: [FormsModule, RouterLink, Encabezado],
+  imports: [FormsModule, RouterLink, Aviso, Encabezado],
   template: `
     <cv-encabezado titulo="Preferencias de notificación" rutaAtras="/propietario" />
     <main class="contenido">
@@ -67,6 +68,18 @@ const PREDETERMINADAS: Preferencias = {
               ><small>Próximas dosis y cuidados de tu mascota</small></span
             >
           </label>
+          @if (!preferencias.recibir_recordatorios) {
+            <cv-aviso
+              tipo="advertencia"
+              titulo="Recordatorios desactivados"
+              icono="iconos/advertencia-ambar.svg"
+            >
+              <p>
+                No te avisaremos de las próximas dosis ni de tus citas. Puedes activarlos de nuevo
+                cuando quieras.
+              </p>
+            </cv-aviso>
+          }
           <label class="opcion opcion--switch">
             <input
               type="checkbox"
