@@ -71,7 +71,7 @@ def _enviar_por_http(
             ],
         },
         auth=_credenciales(configuracion.correo_api_auth),
-        timeout=15,
+        timeout=60,  # en Render el servicio de correo puede estar dormido y tarda en despertar
     )
     respuesta.raise_for_status()
 
