@@ -40,7 +40,8 @@ router = APIRouter(prefix="/atencion", tags=["Atención clínica"])
 
 personal = requiere_rol(*ROLES_PERSONAL)
 # Solo quien atiende escribe en la historia clínica.
-clinico = requiere_rol(Rol.VETERINARIO, Rol.ADMINISTRADOR)
+# RN-02: solo el médico veterinario registra y cierra la historia clínica.
+clinico = requiere_rol(Rol.VETERINARIO)
 
 
 def obtener_servicio(sesion: Session = Depends(obtener_sesion)) -> ServicioAtencion:

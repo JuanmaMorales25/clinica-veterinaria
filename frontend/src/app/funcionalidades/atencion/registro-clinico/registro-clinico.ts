@@ -263,9 +263,7 @@ export default class RegistroClinico {
   protected readonly guardandoNota = signal(false);
   protected readonly errorNota = signal<string | null>(null);
   protected readonly rutaFicha = signal('/personal/pacientes');
-  protected readonly puedeEscribir = computed(() =>
-    ['VETERINARIO', 'ADMINISTRADOR'].includes(this.sesion.usuario()?.rol ?? ''),
-  );
+  protected readonly puedeEscribir = computed(() => this.sesion.usuario()?.rol === 'VETERINARIO');
   protected textoNota = '';
 
   constructor() {

@@ -151,9 +151,7 @@ export default class FichaPaciente {
   protected readonly abriendo = signal(false);
   protected readonly verTodo = signal(false);
 
-  protected readonly puedeAtender = computed(() =>
-    ['VETERINARIO', 'ADMINISTRADOR'].includes(this.sesion.usuario()?.rol ?? ''),
-  );
+  protected readonly puedeAtender = computed(() => this.sesion.usuario()?.rol === 'VETERINARIO');
   protected readonly atencionesVisibles = computed(() => {
     const atenciones = this.ficha()?.atenciones ?? [];
     return this.verTodo() ? atenciones : atenciones.slice(0, ATENCIONES_VISIBLES);
