@@ -14,7 +14,11 @@ function enConstruccion(path: string, titulo: string): Route {
 }
 
 export const routes: Routes = [
-  enConstruccion('', 'Clínica Veterinaria'),
+  {
+    path: '',
+    title: 'Clínica Veterinaria',
+    loadComponent: () => import('./funcionalidades/acceso/inicio/inicio'),
+  },
 
   // Acceso
   {
@@ -22,22 +26,80 @@ export const routes: Routes = [
     title: 'Iniciar sesión · Clínica Veterinaria',
     loadComponent: () => import('./funcionalidades/acceso/iniciar-sesion/iniciar-sesion'),
   },
-  enConstruccion('acceso/registro', 'Registrarse'),
-  enConstruccion('acceso/recuperar', 'Recupera tu acceso'),
-  enConstruccion('acceso/sesion-expirada', 'Sesión expirada'),
+  {
+    path: 'acceso/registro',
+    title: 'Crear cuenta · Clínica Veterinaria',
+    loadComponent: () => import('./funcionalidades/acceso/registro/registro'),
+  },
+  {
+    path: 'acceso/recuperar',
+    title: 'Recuperar acceso · Clínica Veterinaria',
+    loadComponent: () => import('./funcionalidades/acceso/recuperar/recuperar'),
+  },
+  {
+    path: 'acceso/restablecer',
+    title: 'Nueva contraseña · Clínica Veterinaria',
+    loadComponent: () => import('./funcionalidades/acceso/restablecer/restablecer'),
+  },
+  {
+    path: 'acceso/sesion-expirada',
+    title: 'Sesión expirada · Clínica Veterinaria',
+    loadComponent: () => import('./funcionalidades/acceso/sesion-expirada/sesion-expirada'),
+  },
 
   // Carné digital abierto desde el código QR (sin sesión)
-  enConstruccion('carne/:token', 'Carné digital'),
+  {
+    path: 'carne/:token',
+    title: 'Carné digital · Clínica Veterinaria',
+    loadComponent: () => import('./funcionalidades/carne/carne-digital/carne-digital'),
+  },
 
   // Portal del propietario
   {
     path: 'propietario',
     canActivate: [requiereRol('PROPIETARIO')],
     children: [
-      enConstruccion('', 'Mis mascotas'),
-      enConstruccion('agendar', 'Agenda tu cita'),
-      enConstruccion('carne/:mascotaId', 'Carné digital'),
-      enConstruccion('preferencias', 'Preferencias de notificación'),
+      {
+        path: '',
+        pathMatch: 'full',
+        title: 'Mis mascotas · Clínica Veterinaria',
+        loadComponent: () => import('./funcionalidades/agenda/mascotas/mascotas'),
+      },
+      {
+        path: 'agendar',
+        children: [
+          {
+            path: '',
+            title: 'Agenda tu cita · Clínica Veterinaria',
+            loadComponent: () => import('./funcionalidades/agenda/agendar-mascota/agendar-mascota'),
+          },
+          {
+            path: 'servicio/:mascotaId',
+            title: 'Elige el servicio · Clínica Veterinaria',
+            loadComponent: () => import('./funcionalidades/agenda/agendar-servicio/agendar-servicio'),
+          },
+          {
+            path: 'horario/:mascotaId/:servicioId',
+            title: 'Elige fecha y hora · Clínica Veterinaria',
+            loadComponent: () => import('./funcionalidades/agenda/agendar-horario/agendar-horario'),
+          },
+          {
+            path: 'enviada',
+            title: 'Solicitud enviada · Clínica Veterinaria',
+            loadComponent: () => import('./funcionalidades/agenda/solicitud-enviada/solicitud-enviada'),
+          },
+        ],
+      },
+      {
+        path: 'carne/:mascotaId',
+        title: 'Carné digital · Clínica Veterinaria',
+        loadComponent: () => import('./funcionalidades/carne/carne-digital/carne-digital'),
+      },
+      {
+        path: 'preferencias',
+        title: 'Preferencias de notificación · Clínica Veterinaria',
+        loadComponent: () => import('./funcionalidades/notificaciones/preferencias/preferencias'),
+      },
     ],
   },
 
@@ -79,7 +141,11 @@ export const routes: Routes = [
         loadComponent: () => import('./funcionalidades/atencion/registro-clinico/registro-clinico'),
       },
       enConstruccion('facturacion/:consultaId', 'Facturación'),
-      enConstruccion('citas', 'Citas por confirmar'),
+      {
+        path: 'citas',
+        title: 'Citas por confirmar · Clínica Veterinaria',
+        loadComponent: () => import('./funcionalidades/agenda/citas-pendientes/citas-pendientes'),
+      },
     ],
   },
 

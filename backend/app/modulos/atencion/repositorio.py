@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.core.config import obtener_configuracion
-from app.modulos.agenda.modelos import Cita, EstadoCita, Servicio
+from app.modulos.agenda.modelos import Cita, EstadoCitaValor, Servicio
 from app.modulos.atencion.modelos import (
     Consulta,
     EsquemaVacunacion,
@@ -162,7 +162,7 @@ class RepositorioConsultaSQLAlchemy(RepositorioConsulta):
             .where(
                 Cita.mascota_id == id_mascota,
                 Cita.fecha_hora.between(inicio, fin),
-                Cita.estado == EstadoCita.CONFIRMADA,
+                Cita.estado == EstadoCitaValor.CONFIRMADA,
             )
             .order_by(Cita.fecha_hora)
             .limit(1)
