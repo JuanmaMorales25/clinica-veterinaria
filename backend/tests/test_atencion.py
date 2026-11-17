@@ -10,6 +10,7 @@ import pytest
 from app.core.errores import ErrorDeNegocio
 from app.core.unidad_de_trabajo import UnidadDeTrabajo
 from app.modulos.acceso.modelos import Rol, Usuario
+from app.modulos.agenda.modelos import Cita, EstadoCitaValor
 from app.modulos.atencion.esquemas import DatosConsulta, DecisionAlerta, SolicitudPrescripcion
 from app.modulos.atencion.modelos import Consulta, EsquemaVacunacion, EstadoConsulta, Vacunacion
 from app.modulos.atencion.repositorio import RepositorioConsulta
@@ -146,6 +147,14 @@ def test_cerrar_programa_el_aviso_de_cada_vacuna():
     assert con.cerrada_en is not None
     programador.programar_proxima_dosis.assert_called_once_with(vacuna, con.mascota)
     assert vacuna.fecha_proxima_dosis == date(2027, 10, 20)
+
+
+def test_cerrar_marca_atendida_la_cita_confirmada_del_dia():
+    con = consulta(motivo="Control", diagnostico="Paciente sano")
+    con.cita = Cita(estado=EstadoCitaValor.CONFIRMADA)
+    atencion, _, _ = servicio(con)
+    atencion.cerrar(uuid.uuid4(), VETERINARIA)
+    assert con.cita.estado == EstadoCitaValor.ATENDIDA
 
 
 @pytest.mark.parametrize(

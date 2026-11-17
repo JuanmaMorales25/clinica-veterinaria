@@ -11,7 +11,7 @@ from app.core.db import Base, ConId, ahora, tipo_enum
 
 if TYPE_CHECKING:
     from app.modulos.acceso.modelos import Usuario
-    from app.modulos.agenda.modelos import Servicio
+    from app.modulos.agenda.modelos import Cita, Servicio
     from app.modulos.inventario.modelos import Lote, Producto
     from app.modulos.pacientes.modelos import Mascota
 
@@ -42,6 +42,7 @@ class Consulta(ConId, Base):
 
     mascota: Mapped["Mascota"] = relationship()
     veterinario: Mapped["Usuario"] = relationship()
+    cita: Mapped["Cita | None"] = relationship()
     notas: Mapped[list["NotaAclaratoria"]] = relationship(
         back_populates="consulta", order_by="NotaAclaratoria.fecha"
     )
