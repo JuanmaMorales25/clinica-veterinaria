@@ -1,9 +1,11 @@
 """Convierte la cuenta de cobro y la factura a lo que devuelve la API."""
 
+from collections.abc import Sequence
 from datetime import date
 
 from app.modulos.atencion.modelos import Consulta
 from app.modulos.facturacion.esquemas import (
+    AlertaStockSalida,
     ComprobanteSalida,
     CuentaDeCobroSalida,
     DetalleComprobante,
@@ -12,7 +14,7 @@ from app.modulos.facturacion.esquemas import (
     PacienteFacturacion,
 )
 from app.modulos.facturacion.modelos import Factura
-from app.modulos.facturacion.servicio import CuentaDeCobro
+from app.modulos.facturacion.servicio import AlertaStock, CuentaDeCobro
 
 
 def paciente(consulta: Consulta, dia: date) -> PacienteFacturacion:
@@ -74,7 +76,9 @@ def cuenta_a_salida(
     )
 
 
-def factura_a_salida(factura: Factura, dia: date) -> ComprobanteSalida:
+def factura_a_salida(
+    factura: Factura, dia: date, alertas: Sequence[AlertaStock] = ()
+) -> ComprobanteSalida:
     consulta = factura.consulta
     pago = factura.pagos[0] if factura.pagos else None
     codigos_lote = {d.lote_id: None for d in factura.detalles if d.lote_id}
@@ -107,6 +111,10 @@ def factura_a_salida(factura: Factura, dia: date) -> ComprobanteSalida:
                 subtotal=detalle.subtotal,
             )
             for detalle in factura.detalles
+        ],
+        alertas_stock=[
+            AlertaStockSalida(producto=a.producto, disponible=a.disponible, minimo=a.minimo)
+            for a in alertas
         ],
         anulada_en=factura.anulada_en,
         anulada_por=factura.anulada_por.nombre if factura.anulada_por else None,

@@ -211,3 +211,20 @@ def test_d4_anular_reversa_el_inventario_y_deja_el_motivo():
     with pytest.raises(ErrorDeNegocio) as error:
         f.anular_factura(factura.id, "Otra vez", ADMIN)
     assert error.value.codigo == "FACTURA_YA_ANULADA"
+
+
+def test_al_facturar_avisa_los_productos_por_debajo_del_stock_minimo():
+    consulta, lote_fefo = atencion_de_manolito()
+    lote_vacuna = consulta.vacunaciones[0].lote
+    for lote_usado in (lote_fefo, lote_vacuna):
+        lote_usado.producto.stock_minimo = 5
+    f, *_ = fachada(consulta, lote_fefo)
+    factura = f.facturar_atencion(consulta.id, RECEPCION, EFECTIVO)
+
+    lotes = {lote_fefo.id: lote_fefo, lote_vacuna.id: lote_vacuna}
+    quedan = {lote_fefo.producto_id: 1, lote_vacuna.producto_id: 7}
+    f.existencias.obtener_lote.side_effect = lotes.__getitem__
+    f.existencias.existencia_disponible.side_effect = lambda id_producto, _: quedan[id_producto]
+
+    alertas = f.alertas_stock(factura, date(2026, 10, 20))
+    assert [(a.producto, a.disponible, a.minimo) for a in alertas] == [("Omeprazol 10 mg", 1, 5)]

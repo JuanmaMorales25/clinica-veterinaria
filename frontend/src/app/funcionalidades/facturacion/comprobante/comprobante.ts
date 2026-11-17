@@ -55,6 +55,19 @@ const NOMBRES_MEDIO: Record<string, string> = {
             <p>La atención, el inventario y la factura se guardaron en una sola operación.</p>
           </cv-aviso>
         }
+        @if (factura.estado === 'EMITIDA' && factura.alertas_stock.length) {
+          <cv-aviso
+            tipo="advertencia"
+            titulo="Stock por debajo del mínimo"
+            icono="iconos/advertencia-ambar.svg"
+          >
+            @for (alerta of factura.alertas_stock; track alerta.producto) {
+              <p>
+                {{ alerta.producto }}: quedan {{ alerta.disponible }} (mínimo {{ alerta.minimo }}).
+              </p>
+            }
+          </cv-aviso>
+        }
 
         <cv-tarjeta-paciente
           [paciente]="factura.paciente"

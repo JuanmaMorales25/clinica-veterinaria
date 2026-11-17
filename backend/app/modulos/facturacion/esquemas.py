@@ -80,6 +80,12 @@ class DetalleComprobante(BaseModel):
     subtotal: float
 
 
+class AlertaStockSalida(BaseModel):
+    producto: str
+    disponible: int
+    minimo: int
+
+
 class ComprobanteSalida(BaseModel):
     id: uuid.UUID
     numero: str
@@ -99,6 +105,8 @@ class ComprobanteSalida(BaseModel):
     anulada_en: datetime | None
     anulada_por: str | None
     motivo_anulacion: str | None
+    # Solo para el personal: no se imprime en el comprobante del propietario.
+    alertas_stock: list[AlertaStockSalida] = []
 
 
 class CuentaDeCobroSalida(BaseModel):
