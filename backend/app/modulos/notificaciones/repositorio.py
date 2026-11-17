@@ -1,9 +1,11 @@
 import uuid
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
+from app.core.config import obtener_configuracion
 from app.modulos.agenda.modelos import Cita
 from app.modulos.atencion.modelos import Vacunacion
 from app.modulos.notificaciones.modelos import EstadoRecordatorio, Recordatorio, TipoRecordatorio
@@ -45,7 +47,7 @@ class RepositorioNotificaciones:
         consulta = select(Recordatorio).where(Recordatorio.id == recordatorio_id).with_for_update()
         return self.sesion.scalar(consulta)
 
-    def detalle_recordatorio(self, recordatorio: Recordatorio) -> str:
+    def detalle_recordatorio(self, recordatorio: Recordatorio, mascota: str) -> str:
         if recordatorio.tipo == TipoRecordatorio.PROXIMA_DOSIS and recordatorio.vacunacion_id:
             vacunacion = self.sesion.scalar(
                 select(Vacunacion)
@@ -53,7 +55,9 @@ class RepositorioNotificaciones:
                 .options(selectinload(Vacunacion.esquema))
             )
             if vacunacion is not None:
-                return f"Tiene pendiente la próxima dosis de {vacunacion.esquema.biologico}."
+                return (
+                    f"{mascota} tiene pendiente la próxima dosis de {vacunacion.esquema.biologico}."
+                )
         if recordatorio.tipo == TipoRecordatorio.CITA and recordatorio.cita_id:
             cita = self.sesion.scalar(
                 select(Cita)
@@ -61,8 +65,12 @@ class RepositorioNotificaciones:
                 .options(selectinload(Cita.servicio))
             )
             if cita is not None:
-                return f"Recuerda tu cita de {cita.servicio.nombre} el {cita.fecha_hora:%d/%m/%Y a las %H:%M}."
-        return "Tienes un recordatorio pendiente para tu mascota."
+                fecha = cita.fecha_hora.astimezone(ZoneInfo(obtener_configuracion().zona_horaria))
+                return (
+                    f"Recuerda la cita de {mascota} ({cita.servicio.nombre}) "
+                    f"el {fecha:%d/%m/%Y a las %H:%M}."
+                )
+        return f"Tienes un recordatorio pendiente para {mascota}."
 
     def guardar(self) -> None:
         self.sesion.commit()

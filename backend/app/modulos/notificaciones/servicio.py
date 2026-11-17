@@ -118,10 +118,8 @@ class ServicioNotificaciones:
                 recordatorio.fecha_programada = hora_envio
                 continue
 
-            mensaje = (
-                f"Hola {propietario.nombre}. {self.repositorio.detalle_recordatorio(recordatorio)} "
-                f"Mascota: {mascota.nombre}."
-            )
+            detalle = self.repositorio.detalle_recordatorio(recordatorio, mascota.nombre)
+            mensaje = f"Hola {propietario.nombre}. {detalle}"
             canal = self.canales[preferencia.canal if preferencia else TipoCanal.CORREO]
             try:
                 canal.enviar(propietario, mensaje)
