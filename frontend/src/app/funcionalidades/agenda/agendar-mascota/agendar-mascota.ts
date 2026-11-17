@@ -3,21 +3,22 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { leerErrorApi } from '../../../core/api/error-api';
+import { Aviso } from '../../../compartido/aviso/aviso';
 import { Encabezado } from '../../../compartido/encabezado/encabezado';
 import { AgendaService } from '../agenda.service';
 import { MascotaAgendada } from '../agenda.modelos';
 
 @Component({
   selector: 'cv-agendar-mascota',
-  imports: [FormsModule, RouterLink, Encabezado],
+  imports: [FormsModule, RouterLink, Aviso, Encabezado],
   template: `
     <cv-encabezado titulo="Agenda tu cita" rutaAtras="/propietario" />
     <main class="contenido">
       <p class="paso">PASO 1 DE 3</p>
       <h2 class="titulo-pagina">¿Para cuál mascota?</h2>
       <p class="texto-suave">Elige una mascota para continuar con la solicitud.</p>
-      @if (error()) {
-        <p class="ayuda-error" role="alert">{{ error() }}</p>
+      @if (errorCarga()) {
+        <p class="ayuda-error" role="alert">{{ errorCarga() }}</p>
       }
       <div class="lista">
         @for (mascota of mascotas(); track mascota.id) {
@@ -45,6 +46,11 @@ import { MascotaAgendada } from '../agenda.modelos';
             placeholder="HC-00481"
           />
         </label>
+        @if (error()) {
+          <cv-aviso tipo="alerta" titulo="Número de historia inválido">
+            <p>{{ error() }}</p>
+          </cv-aviso>
+        }
         <button class="boton boton--secundario" type="submit" [disabled]="guardando()">
           {{ guardando() ? 'Buscando…' : 'Buscar por historia' }}
         </button>
@@ -66,8 +72,17 @@ import { MascotaAgendada } from '../agenda.modelos';
       width: 100%;
       flex-direction: row;
       align-items: center;
+      color: inherit;
+      font: inherit;
       text-align: left;
       cursor: pointer;
+    }
+    .mascota:hover {
+      border-color: var(--color-primario);
+    }
+    .mascota__datos strong {
+      color: var(--color-marino);
+      font-size: var(--texto-destacado);
     }
     .mascota__icono {
       display: grid;
@@ -98,6 +113,7 @@ export default class AgendarMascota {
   private readonly agenda = inject(AgendaService);
   private readonly router = inject(Router);
   protected readonly mascotas = signal<MascotaAgendada[]>([]);
+  protected readonly errorCarga = signal<string | null>(null);
   protected readonly error = signal<string | null>(null);
   protected readonly guardando = signal(false);
   protected historia = '';
@@ -129,7 +145,7 @@ export default class AgendarMascota {
   private cargarMascotas(): void {
     this.agenda.mascotas().subscribe({
       next: (mascotas) => this.mascotas.set(mascotas),
-      error: (error: unknown) => this.error.set(leerErrorApi(error).mensaje),
+      error: (error: unknown) => this.errorCarga.set(leerErrorApi(error).mensaje),
     });
   }
 }
