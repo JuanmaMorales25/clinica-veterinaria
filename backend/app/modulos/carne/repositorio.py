@@ -1,6 +1,7 @@
 import uuid
+from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.modulos.atencion.modelos import Consulta, Vacunacion
@@ -26,6 +27,11 @@ class RepositorioCarne:
                 selectinload(Mascota.alergias),
                 selectinload(Mascota.propietario),
             )
+        )
+
+    def ultima_atencion(self, mascota_id: uuid.UUID) -> datetime | None:
+        return self.sesion.scalar(
+            select(func.max(Consulta.fecha)).where(Consulta.mascota_id == mascota_id)
         )
 
     def vacunas_de(self, mascota_id: uuid.UUID) -> list[Vacunacion]:

@@ -279,3 +279,81 @@ textarea.entrada {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* Tarjeta angosta y centrada de las pantallas de acceso y de estado (A1–A4, E1, M1.3). */
+.tarjeta-centrada {
+  align-self: center;
+  width: 100%;
+  max-width: var(--ancho-contenido);
+}
+
+.tarjeta-estado {
+  align-items: center;
+  padding: 34px;
+  text-align: center;
+  .boton {
+    width: 100%;
+  }
+}
+
+.tarjeta-estado__icono {
+  width: 42px;
+  height: 42px;
+}
+
+.tarjeta-estado__titulo {
+  color: var(--color-marino);
+  font-size: var(--texto-titulo);
+  font-weight: 600;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 13px;
+  color: var(--color-marino);
+  font-size: var(--texto-meta);
+  font-weight: 500;
+  background: var(--color-primario-suave);
+  border: 1.5px solid var(--color-primario);
+  border-radius: 999px;
+}
+
+/* Opciones tipo píldora (rol en el inicio de sesión, canal preferido). */
+.pildoras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.pildora {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: var(--texto-meta);
+  font-weight: 500;
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-borde);
+  border-radius: 999px;
+  cursor: pointer;
+  input {
+    accent-color: var(--color-primario);
+  }
+  &:has(input:checked) {
+    background: var(--color-primario-suave);
+    border: 2px solid var(--color-primario);
+  }
+  &:has(input:focus-visible) {
+    outline: 3px solid var(--color-primario-suave);
+  }
+}

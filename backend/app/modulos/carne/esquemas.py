@@ -25,6 +25,9 @@ class CarnetMascotaSalida(BaseModel):
     alergias: list[AlergiaCarnet]
     vacunas: list[VacunaCarnet]
     proximas_dosis: list[VacunaCarnet]
+    fotografia: str | None = None
+    esquema_al_dia: bool = True
+    ultima_atencion: date | None = None
 
 
 class EnlaceCarneSalida(BaseModel):

@@ -13,6 +13,8 @@ class MascotaAgendaSalida(BaseModel):
     especie: str
     raza: str | None
     numero_historia: str
+    edad: str = ""
+    fotografia: str | None = None
 
 
 class ServicioAgendaSalida(BaseModel):
@@ -27,8 +29,9 @@ class ServicioAgendaSalida(BaseModel):
 
 class HorarioDisponible(BaseModel):
     fecha_hora: datetime
-    veterinario_id: uuid.UUID
-    veterinario: str
+    disponible: bool = True
+    veterinario_id: uuid.UUID | None = None
+    veterinario: str | None = None
 
 
 class SolicitudCita(BaseModel):

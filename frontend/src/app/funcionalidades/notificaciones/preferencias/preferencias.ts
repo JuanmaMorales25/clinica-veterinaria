@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 
 import { environment } from '../../../../environments/environment';
 import { leerErrorApi } from '../../../core/api/error-api';
@@ -24,134 +23,204 @@ const PREDETERMINADAS: Preferencias = {
   hora_preferida: '09:00',
 };
 
+/** M4.2 Preferencias de notificación. Apagar los recordatorios de vacunación muestra E2. */
 @Component({
   selector: 'cv-preferencias-notificacion',
-  imports: [FormsModule, RouterLink, Aviso, Encabezado],
+  imports: [FormsModule, Aviso, Encabezado],
   template: `
-    <cv-encabezado titulo="Preferencias de notificación" rutaAtras="/propietario" />
+    <cv-encabezado titulo="Mis notificaciones" rutaAtras="/propietario" />
     <main class="contenido">
-      <h2 class="titulo-pagina">¿Cómo quieres recibir avisos?</h2>
+      <h2 class="titulo-pagina">Preferencias de notificación</h2>
+      @if (!cargando() && !preferencias.recibir_recordatorios) {
+        <cv-aviso
+          tipo="advertencia"
+          titulo="Recordatorios de vacunación desactivados"
+          icono="iconos/advertencia-ambar.svg"
+        >
+          <p>
+            No recibirás avisos antes de la próxima dosis de tus mascotas. Puedes volver a
+            activarlos cuando quieras.
+          </p>
+        </cv-aviso>
+      }
       @if (error()) {
         <p class="ayuda-error" role="alert">{{ error() }}</p>
       }
       @if (guardado()) {
-        <p class="guardado" role="status">Tus preferencias se guardaron.</p>
+        <cv-aviso tipo="exito" titulo="Preferencias guardadas">
+          <p>Tus preferencias se guardaron.</p>
+        </cv-aviso>
       }
       @if (cargando()) {
         <p class="texto-suave">Cargando preferencias…</p>
       } @else {
         <form class="tarjeta" (ngSubmit)="guardar()">
+          @for (opcion of interruptores; track opcion.campo) {
+            <label class="interruptor">
+              <span class="interruptor__texto">
+                <strong>{{ opcion.titulo }}</strong>
+                <small>{{ opcion.detalle }}</small>
+              </span>
+              <span class="interruptor__control">
+                <input
+                  type="checkbox"
+                  role="switch"
+                  [name]="opcion.campo"
+                  [(ngModel)]="preferencias[opcion.campo]"
+                  (ngModelChange)="guardado.set(false)"
+                />
+                <span>{{ preferencias[opcion.campo] ? 'Activado' : 'Desactivado' }}</span>
+              </span>
+            </label>
+          }
           <fieldset class="grupo">
             <legend>Canal preferido</legend>
-            <label class="opcion">
-              <input type="radio" name="canal" value="CORREO" [(ngModel)]="preferencias.canal" />
-              <span>Correo electrónico</span>
-            </label>
-            <label class="opcion">
-              <input
-                type="radio"
-                name="canal"
-                value="MENSAJERIA"
-                [(ngModel)]="preferencias.canal"
-              />
-              <span>Mensaje de texto <small>(simulado en el prototipo)</small></span>
-            </label>
+            <div class="pildoras">
+              <label class="pildora">
+                <input type="radio" name="canal" value="CORREO" [(ngModel)]="preferencias.canal" />
+                Correo electrónico
+              </label>
+              <label class="pildora">
+                <input
+                  type="radio"
+                  name="canal"
+                  value="MENSAJERIA"
+                  [(ngModel)]="preferencias.canal"
+                />
+                Mensajería
+              </label>
+            </div>
           </fieldset>
-          <label class="opcion opcion--switch">
+          <div class="campo hora">
+            <label for="hora">Horario preferido para recibir avisos</label>
             <input
-              type="checkbox"
-              name="recibir"
-              [(ngModel)]="preferencias.recibir_recordatorios"
-            />
-            <span
-              ><strong>Recordatorios de salud</strong
-              ><small>Próximas dosis y cuidados de tu mascota</small></span
-            >
-          </label>
-          @if (!preferencias.recibir_recordatorios) {
-            <cv-aviso
-              tipo="advertencia"
-              titulo="Recordatorios desactivados"
-              icono="iconos/advertencia-ambar.svg"
-            >
-              <p>
-                No te avisaremos de las próximas dosis ni de tus citas. Puedes activarlos de nuevo
-                cuando quieras.
-              </p>
-            </cv-aviso>
-          }
-          <label class="opcion opcion--switch">
-            <input
-              type="checkbox"
-              name="citas"
-              [(ngModel)]="preferencias.recordatorio_citas"
-              [disabled]="!preferencias.recibir_recordatorios"
-            />
-            <span
-              ><strong>Recordatorios de citas</strong
-              ><small>Un aviso de tus próximas atenciones</small></span
-            >
-          </label>
-          <label class="campo hora">
-            <span>Hora preferida para recibir avisos</span>
-            <input
+              id="hora"
               class="entrada"
               type="time"
               name="hora"
               [(ngModel)]="preferencias.hora_preferida"
-              [disabled]="!preferencias.recibir_recordatorios"
             />
-          </label>
-          <div class="acciones">
-            <button class="boton boton--primario" type="submit" [disabled]="guardando()">
-              {{ guardando() ? 'Guardando…' : 'Guardar preferencias' }}
-            </button>
-            <a class="boton boton--secundario" routerLink="/propietario">Volver</a>
           </div>
         </form>
+        <div class="acciones">
+          <button
+            class="boton boton--primario"
+            type="button"
+            [disabled]="guardando()"
+            (click)="guardar()"
+          >
+            {{ guardando() ? 'Guardando…' : 'Guardar preferencias' }}
+          </button>
+        </div>
       }
     </main>
   `,
   styles: `
-    .grupo {
-      display: grid;
-      gap: 14px;
-      padding: 0;
-      border: 0;
-    }
-    .grupo legend {
-      margin-bottom: 12px;
-      color: var(--color-marino);
-      font-weight: 600;
-    }
-    .opcion {
+    .interruptor {
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--color-borde);
+      cursor: pointer;
     }
-    .opcion input {
-      width: 20px;
-      height: 20px;
-      accent-color: var(--color-primario);
+    .interruptor__texto {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      strong {
+        color: var(--color-marino);
+        font-size: var(--texto-cuerpo);
+        font-weight: 600;
+      }
+      small {
+        color: var(--color-texto-suave);
+        font-size: var(--texto-meta);
+      }
     }
-    .opcion--switch span {
-      display: grid;
-      gap: 3px;
-    }
-    .opcion small {
+    .interruptor__control {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 150px;
       color: var(--color-texto-suave);
+      font-size: var(--texto-meta);
+      font-weight: 500;
+      input {
+        position: relative;
+        width: 46px;
+        height: 26px;
+        margin: 0;
+        background: var(--color-texto-suave);
+        border-radius: 999px;
+        cursor: pointer;
+        appearance: none;
+        transition: background 0.15s;
+        &::after {
+          content: '';
+          position: absolute;
+          top: 3px;
+          left: 3px;
+          width: 20px;
+          height: 20px;
+          background: #fff;
+          border-radius: 50%;
+          transition: transform 0.15s;
+        }
+        &:checked {
+          background: var(--color-primario);
+        }
+        &:checked::after {
+          transform: translateX(20px);
+        }
+        &:focus-visible {
+          outline: 3px solid var(--color-primario-suave);
+        }
+      }
     }
-    .hora {
-      max-width: 300px;
+    .grupo {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      legend {
+        margin-bottom: 10px;
+        font-size: var(--texto-etiqueta);
+        font-weight: 500;
+      }
     }
-    .guardado {
-      color: var(--color-exito);
+    .hora .entrada {
+      max-width: 260px;
     }
   `,
 })
 export default class PreferenciasNotificacion {
   private readonly http = inject(HttpClient);
   protected preferencias = { ...PREDETERMINADAS };
+  protected readonly interruptores: {
+    campo: 'recibir_recordatorios' | 'recordatorio_citas' | 'promociones';
+    titulo: string;
+    detalle: string;
+  }[] = [
+    {
+      campo: 'recibir_recordatorios',
+      titulo: 'Recordatorios de vacunación y desparasitación',
+      detalle: 'Te avisamos 7 días antes de la próxima dosis.',
+    },
+    {
+      campo: 'recordatorio_citas',
+      titulo: 'Recordatorio de cita',
+      detalle: 'Te avisamos 24 horas antes de tu cita.',
+    },
+    {
+      campo: 'promociones',
+      titulo: 'Promociones y novedades',
+      detalle: 'Ofertas y noticias de la clínica.',
+    },
+  ];
   protected readonly cargando = signal(true);
   protected readonly guardando = signal(false);
   protected readonly guardado = signal(false);

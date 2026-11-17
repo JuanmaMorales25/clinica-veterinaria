@@ -11,36 +11,43 @@ import { Encabezado } from '../../../compartido/encabezado/encabezado';
   selector: 'cv-recuperar-acceso',
   imports: [FormsModule, RouterLink, Aviso, Encabezado],
   template: `
-    <cv-encabezado titulo="Recupera tu acceso" rutaAtras="/acceso/iniciar-sesion" />
+    <cv-encabezado titulo="Recuperar contraseña" rutaAtras="/acceso/iniciar-sesion" />
     <main class="contenido">
-      <form class="tarjeta" (ngSubmit)="enviar()">
+      <form class="tarjeta tarjeta-centrada" (ngSubmit)="enviar()">
+        <h2 class="tarjeta__titulo">Recupera tu acceso</h2>
+        <p class="texto-suave">
+          Escribe el correo con el que te registraste y te enviaremos un enlace para crear una
+          contraseña nueva.
+        </p>
+        <div class="campo">
+          <label for="correo">Correo electrónico</label>
+          <input
+            id="correo"
+            class="entrada"
+            type="email"
+            name="correo"
+            autocomplete="email"
+            placeholder="tu@email.com"
+            required
+            [(ngModel)]="correo"
+          />
+        </div>
+        @if (error()) {
+          <p class="ayuda-error" role="alert">{{ error() }}</p>
+        }
         @if (enviado()) {
-          <cv-aviso tipo="exito" titulo="Revisa tu correo">
-            <p>Si la cuenta existe, enviaremos un enlace para restablecer la contraseña.</p>
+          <cv-aviso tipo="exito" titulo="Enlace enviado">
+            <p>
+              Revisa tu bandeja de entrada y la carpeta de spam. El enlace tiene vigencia limitada.
+            </p>
           </cv-aviso>
           <a class="boton boton--primario" routerLink="/acceso/iniciar-sesion">
-            Volver a iniciar sesión
+            Volver al inicio de sesión
           </a>
+          <button class="boton boton--secundario" type="submit" [disabled]="enviando()">
+            {{ enviando() ? 'Enviando…' : 'Reenviar enlace' }}
+          </button>
         } @else {
-          <h2 class="tarjeta__titulo">Restablecer contraseña</h2>
-          <p class="texto-suave">
-            Escribe el correo de tu cuenta. Si está registrado, recibirás un enlace de recuperación.
-          </p>
-          <div class="campo">
-            <label for="correo">Correo electrónico</label>
-            <input
-              id="correo"
-              class="entrada"
-              type="email"
-              name="correo"
-              autocomplete="email"
-              required
-              [(ngModel)]="correo"
-            />
-          </div>
-          @if (error()) {
-            <p class="ayuda-error" role="alert">{{ error() }}</p>
-          }
           <button class="boton boton--primario" type="submit" [disabled]="enviando()">
             {{ enviando() ? 'Enviando…' : 'Enviar enlace' }}
           </button>

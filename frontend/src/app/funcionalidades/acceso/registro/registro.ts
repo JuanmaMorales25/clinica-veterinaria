@@ -10,9 +10,9 @@ import { Encabezado } from '../../../compartido/encabezado/encabezado';
   selector: 'cv-registro',
   imports: [FormsModule, RouterLink, Encabezado],
   template: `
-    <cv-encabezado titulo="Crea tu cuenta" rutaAtras="/" />
+    <cv-encabezado titulo="Registrarse" rutaAtras="/acceso/iniciar-sesion" />
     <main class="contenido">
-      <form class="tarjeta" (ngSubmit)="registrar()">
+      <form class="tarjeta tarjeta-centrada" (ngSubmit)="registrar()">
         <h2 class="tarjeta__titulo">Datos del propietario</h2>
         <p class="texto-suave">
           Si ya tienes una mascota registrada, ingresa el correo y teléfono asociados a tu ficha
@@ -105,7 +105,7 @@ import { Encabezado } from '../../../compartido/encabezado/encabezado';
           <p class="ayuda-error" role="alert">{{ error() }}</p>
         }
         <button class="boton boton--primario" type="submit" [disabled]="enviando()">
-          {{ enviando() ? 'Creando cuenta…' : 'Crear cuenta' }}
+          {{ enviando() ? 'Registrando…' : 'Registrarme' }}
         </button>
         <p class="texto-suave">
           ¿Ya tienes cuenta? <a routerLink="/acceso/iniciar-sesion">Inicia sesión</a>
