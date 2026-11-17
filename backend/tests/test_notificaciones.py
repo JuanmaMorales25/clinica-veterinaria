@@ -122,3 +122,10 @@ def test_falla_del_canal_se_reintenta_y_al_tercer_intento_queda_fallido():
         assert pendiente.intentos == intento
     assert pendiente.estado == EstadoRecordatorio.FALLIDO
     assert "no disponible" in pendiente.ultimo_error
+
+
+def test_e2_apagar_vacunacion_no_apaga_el_recordatorio_de_cita():
+    pendiente = recordatorio(TipoRecordatorio.CITA)
+    enviados, _ = procesar(pendiente, preferencia(recibir_recordatorios=False))
+    assert enviados == 1
+    assert pendiente.estado == EstadoRecordatorio.ENVIADO

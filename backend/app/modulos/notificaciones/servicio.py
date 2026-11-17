@@ -96,13 +96,12 @@ class ServicioNotificaciones:
         for recordatorio, mascota, propietario, preferencia in self.repositorio.pendientes(
             instante
         ):
-            recibir_recordatorios = preferencia is None or preferencia.recibir_recordatorios
-            recordar_cita_desactivado = (
-                preferencia is not None
-                and recordatorio.tipo == TipoRecordatorio.CITA
-                and not preferencia.recordatorio_citas
-            )
-            if not recibir_recordatorios or recordar_cita_desactivado:
+            # Cada interruptor de M4.2 controla su tipo: vacunación (E2) o cita.
+            if recordatorio.tipo == TipoRecordatorio.CITA:
+                desactivado = preferencia is not None and not preferencia.recordatorio_citas
+            else:
+                desactivado = preferencia is not None and not preferencia.recibir_recordatorios
+            if desactivado:
                 recordatorio.estado = EstadoRecordatorio.CANCELADO
                 recordatorio.ultimo_error = "Recordatorios desactivados por el propietario."
                 continue
