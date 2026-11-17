@@ -51,6 +51,9 @@ services:
     envVars:
       - key: MP_UI_BIND_ADDR
         value: 0.0.0.0:10000
+      # El SMTP no se usa en Render (el correo entra por la API HTTP): solo escucha en local.
+      - key: MP_SMTP_BIND_ADDR
+        value: 127.0.0.1:1025
       # Usuario y clave de la bandeja ("usuario:clave"). Render la pide al crear el Blueprint.
       - key: MP_UI_AUTH
         sync: false
