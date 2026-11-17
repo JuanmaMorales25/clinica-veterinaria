@@ -136,6 +136,7 @@ Antes de crear algo parecido, revisar si ya está:
 | `RepositorioMascota` | `backend/app/modulos/pacientes/repositorio.py` | Buscar y obtener mascotas con propietario y alergias. Se le pueden agregar métodos. |
 | `Mascota.describir_edad(hoy)` | `pacientes/modelos.py` | Edad legible: "6 meses", "1 año". |
 | `ProgramadorRecordatorios` | `backend/app/modulos/notificaciones/programador.py` | Interfaz del Entregable 2. `ProgramadorRecordatoriosBD` deja el aviso de la próxima dosis en la tabla `recordatorio` al cerrar la atención; el programador de tareas solo tiene que enviar los que estén `PROGRAMADO` y vencidos, respetando la preferencia del propietario (E2). |
+| `enviar_correo(destinatario, asunto, cuerpo, adjuntos)` | `backend/app/core/correo.py` | Envío de correo listo para `CanalCorreo`: en local va por SMTP a Mailpit y en el despliegue por la API HTTP de Mailpit (`CORREO_API_URL`). Lo usa el comprobante de la factura. |
 | Errores de validación | `app/main.py` | Los datos inválidos también responden `{codigo: "DATOS_INVALIDOS", mensaje, detalle: {campos}}`. |
 | `/api/salud` | `app/main.py` | Devuelve `modo_demo` para que el frontend sepa si las teclas 1–5 están activas. |
 | `/api/demo/...` | `app/core/demo.py` | Endpoints de las fallas provocadas. Solo responden con `MODO_DEMO=true`. |
@@ -223,8 +224,9 @@ recordatorios → E2.
 
 ## 7. Notificaciones
 
-- **Correo**: se envía por SMTP a Mailpit, que lo atrapa y lo muestra en
-  <http://localhost:8025>. Así se ve en la demostración sin enviar correos reales.
+- **Correo**: se envía con `enviar_correo()` de `app/core/correo.py`. En local va por SMTP a
+  Mailpit, que lo atrapa y lo muestra en <http://localhost:8025>; en el despliegue sale por la
+  API HTTP del Mailpit publicado. Así se ve en la demostración sin enviar correos reales.
 - **Mensajería**: canal simulado. No llama a ningún servicio; guarda cada envío en la tabla
   `mensaje_enviado`.
 - Los dos canales implementan `CanalNotificacion` (Strategy) y quedan intercambiables.
@@ -244,18 +246,28 @@ recordatorios → E2.
 
 ## 9. Despliegue (para el diagrama de María José)
 
-Lo que se despliega son cuatro piezas, las mismas del `docker-compose.yml`:
+El sistema se publica en **Render** (plan gratuito, región Oregón, EE. UU.) con el archivo
+`render.yaml` de la raíz. Son las mismas piezas del `docker-compose.yml`:
 
-| Nodo | Qué corre | Se comunica con |
-|---|---|---|
-| Navegador del usuario (PC o celular) | Aplicación Angular | API por HTTPS (REST/JSON) |
-| Servidor web | Archivos estáticos de Angular (nginx) | — |
-| Servidor de aplicación | API FastAPI + programador de tareas | Base de datos (TCP 5432), correo (SMTP) |
-| Servidor de base de datos | PostgreSQL 17 | — |
-| Servicio de correo | Mailpit (pruebas) | — |
+| Nodo | Servicio en Render | Qué corre (artefacto) | URL pública | Se comunica con |
+|---|---|---|---|---|
+| Dispositivo del usuario (PC o celular) | — | Navegador con la aplicación Angular | — | Servidor web y API por HTTPS |
+| Servidor web | Static Site `clinica-veterinaria-itm` (CDN de Render) | Archivos estáticos de Angular 22 (`frontend/dist/frontend/browser`) | https://clinica-veterinaria-itm.onrender.com | — |
+| Servidor de aplicación | Web Service Docker `clinica-veterinaria-itm-api` | Contenedor `python:3.13-slim` con FastAPI + Uvicorn y el programador de tareas (APScheduler) (`backend/Dockerfile`) | https://clinica-veterinaria-itm-api.onrender.com | Base de datos por TCP 5432 en la red privada de Render; correo por HTTPS (API de Mailpit) |
+| Servidor de base de datos | PostgreSQL 17 `clinica-veterinaria-itm-db` | Base de datos `clinica` | Solo red privada | — |
+| Servicio de correo (pruebas) | Web Service con imagen `axllent/mailpit:v1.33` (`clinica-veterinaria-itm-correo`) | Bandeja web de los correos enviados | https://clinica-veterinaria-itm-correo.onrender.com (pide usuario y clave) | — |
 
-El proveedor de la nube se confirma al publicar. Cuando quede, se actualizan aquí los nombres
-reales de los nodos y las URL.
+Protocolos: HTTPS (TLS) entre el navegador y Render, REST/JSON entre Angular y la API, TCP 5432
+entre la API y PostgreSQL. En local es lo mismo con Docker Compose: nginx en el puerto 8080, API
+en el 8000, PostgreSQL en el 5435 y Mailpit en el 8025 (SMTP 1025).
+
+Para tener en cuenta en la sustentación:
+
+- Los servicios gratuitos se duermen tras 15 minutos sin uso y tardan cerca de un minuto en
+  despertar: abrir la aplicación y la bandeja de correo un par de minutos antes.
+- La base de datos gratuita vence 30 días después de creada; alcanza de sobra para la entrega.
+- Al arrancar, la API aplica las migraciones y carga los datos de demostración si la base está
+  vacía.
 
 ## 10. Forma de trabajo con Git
 

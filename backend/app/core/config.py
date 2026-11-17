@@ -21,6 +21,10 @@ class Configuracion(BaseSettings):
     smtp_host: str = "localhost"
     smtp_puerto: int = 1025
     correo_remitente: str = "patitas@clinica.veterinaria.com"
+    # En el despliegue el correo sale por la API HTTP de Mailpit en lugar de SMTP.
+    correo_api_url: str = ""
+    # Mismo formato que MP_UI_AUTH de Mailpit: "usuario:clave".
+    correo_api_auth: str = ""
 
     carne_enlace_horas: int = 24
     dias_aviso_proxima_dosis: int = 7
@@ -37,9 +41,16 @@ class Configuracion(BaseSettings):
                 return "postgresql+psycopg://" + valor.removeprefix(prefijo)
         return valor
 
+    @field_validator("url_frontend", "correo_api_url")
+    @classmethod
+    def completar_esquema(cls, valor: str) -> str:
+        return valor if not valor or valor.startswith("http") else f"https://{valor}"
+
     @property
     def lista_cors(self) -> list[str]:
-        return [origen.strip() for origen in self.cors_origenes.split(",") if origen.strip()]
+        # Render entrega solo el dominio del servicio; se completa con https://.
+        origenes = [origen.strip() for origen in self.cors_origenes.split(",") if origen.strip()]
+        return [o if o.startswith("http") else f"https://{o}" for o in origenes]
 
 
 @lru_cache

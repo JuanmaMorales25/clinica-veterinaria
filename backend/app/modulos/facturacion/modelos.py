@@ -10,6 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.db import Base, ConId, ahora, tipo_enum
 
 if TYPE_CHECKING:
+    from app.modulos.acceso.modelos import Usuario
     from app.modulos.atencion.modelos import Consulta
 
 CONSECUTIVO_FACTURA = Sequence("factura_consecutivo_seq", start=1)
@@ -48,6 +49,7 @@ class Factura(ConId, Base):
     motivo_anulacion: Mapped[str | None] = mapped_column(Text)
 
     consulta: Mapped["Consulta"] = relationship()
+    anulada_por: Mapped["Usuario | None"] = relationship()
     detalles: Mapped[list["DetalleFactura"]] = relationship(
         back_populates="factura", cascade="all, delete-orphan"
     )
