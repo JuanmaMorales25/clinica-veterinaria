@@ -1,3 +1,4 @@
+from datetime import time
 from functools import lru_cache
 
 from pydantic import field_validator
@@ -28,6 +29,13 @@ class Configuracion(BaseSettings):
 
     carne_enlace_horas: int = 24
     dias_aviso_proxima_dosis: int = 7
+    dias_aviso_cita: int = 1
+
+    # Valores de demostración; la clínica puede ajustarlos por variables de entorno.
+    agenda_hora_apertura: time = time(9, 0)
+    agenda_hora_cierre: time = time(17, 0)
+    agenda_intervalo_minutos: int = 30
+    agenda_dias_atencion: str = "0,1,2,3,4"
 
     # Permite provocar a propósito las fallas de los flujos alternos (por ejemplo, D3).
     modo_demo: bool = True
@@ -50,7 +58,15 @@ class Configuracion(BaseSettings):
     def lista_cors(self) -> list[str]:
         # Render entrega solo el dominio del servicio; se completa con https://.
         origenes = [origen.strip() for origen in self.cors_origenes.split(",") if origen.strip()]
-        return [o if o.startswith("http") else f"https://{o}" for o in origenes]
+        return [origen if origen.startswith("http") else f"https://{origen}" for origen in origenes]
+
+    @property
+    def dias_agenda(self) -> frozenset[int]:
+        return frozenset(
+            int(dia.strip())
+            for dia in self.agenda_dias_atencion.split(",")
+            if dia.strip().isdigit() and 0 <= int(dia.strip()) <= 6
+        )
 
 
 @lru_cache

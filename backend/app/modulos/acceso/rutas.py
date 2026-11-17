@@ -1,28 +1,49 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.db import obtener_sesion
-from app.core.errores import ErrorDeNegocio
-from app.core.seguridad import crear_token, obtener_usuario_actual, verificar_contrasena
-from app.modulos.acceso.esquemas import RespuestaLogin, SolicitudLogin, UsuarioSalida
+from app.core.seguridad import obtener_usuario_actual
+from app.modulos.acceso.esquemas import (
+    RespuestaLogin,
+    RespuestaMensaje,
+    SolicitudLogin,
+    SolicitudRecuperacion,
+    SolicitudRegistro,
+    SolicitudRestablecer,
+    UsuarioSalida,
+)
 from app.modulos.acceso.modelos import Usuario
+from app.modulos.acceso.servicio import ServicioAcceso
 
 router = APIRouter(prefix="/acceso", tags=["Acceso"])
 
 
 @router.post("/login", response_model=RespuestaLogin)
 def iniciar_sesion(datos: SolicitudLogin, sesion: Session = Depends(obtener_sesion)):
-    usuario = sesion.scalar(
-        select(Usuario).where(Usuario.correo_electronico == datos.correo.lower())
+    return ServicioAcceso(sesion).iniciar_sesion(datos)
+
+
+@router.post("/registro", response_model=RespuestaLogin, status_code=201)
+def registrar(datos: SolicitudRegistro, sesion: Session = Depends(obtener_sesion)):
+    return ServicioAcceso(sesion).registrar(datos)
+
+
+@router.post("/recuperar", response_model=RespuestaMensaje)
+def solicitar_recuperacion(
+    datos: SolicitudRecuperacion, sesion: Session = Depends(obtener_sesion)
+):
+    ServicioAcceso(sesion).solicitar_recuperacion(datos)
+    return RespuestaMensaje(
+        mensaje="Si la cuenta existe, enviaremos un enlace de recuperación a ese correo."
     )
-    if usuario is None or not verificar_contrasena(datos.contrasena, usuario.contrasena_hash):
-        raise ErrorDeNegocio(
-            "CREDENCIALES_INCORRECTAS", "El correo o la contraseña no coinciden.", 401
-        )
-    if not usuario.estado:
-        raise ErrorDeNegocio("CUENTA_BLOQUEADA", "La cuenta está bloqueada.", 423)
-    return RespuestaLogin(token=crear_token(usuario), usuario=UsuarioSalida.model_validate(usuario))
+
+
+@router.post("/restablecer", response_model=RespuestaMensaje)
+def restablecer_contrasena(
+    datos: SolicitudRestablecer, sesion: Session = Depends(obtener_sesion)
+):
+    ServicioAcceso(sesion).restablecer_contrasena(datos)
+    return RespuestaMensaje(mensaje="La contraseña se actualizó. Ya puedes iniciar sesión.")
 
 
 @router.get("/yo", response_model=UsuarioSalida)

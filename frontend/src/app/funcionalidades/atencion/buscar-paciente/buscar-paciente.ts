@@ -29,6 +29,7 @@ import { ResumenMascota } from '../modelos';
     <cv-encabezado titulo="Panel del personal" rutaAtras="/" />
     <main class="contenido">
       <h2 class="titulo-pagina">Buscar paciente</h2>
+      <a class="boton boton--secundario" routerLink="/personal/citas">Citas pendientes</a>
       <div class="campo">
         <label for="busqueda"
           >Nombre, documento del propietario, teléfono o número de historia</label

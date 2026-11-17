@@ -3,7 +3,13 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { ROLES_PERSONAL, RespuestaLogin, Usuario } from './modelos';
+import {
+  ROLES_PERSONAL,
+  RespuestaLogin,
+  RespuestaMensaje,
+  SolicitudRegistro,
+  Usuario,
+} from './modelos';
 
 const CLAVE_TOKEN = 'cv.token';
 const CLAVE_USUARIO = 'cv.usuario';
@@ -44,6 +50,23 @@ export class SesionService {
     return this.http
       .post<RespuestaLogin>(`${environment.apiUrl}/acceso/login`, { correo, contrasena })
       .pipe(tap((respuesta) => this.guardar(respuesta.token, respuesta.usuario)));
+  }
+
+  registrar(datos: SolicitudRegistro): Observable<RespuestaLogin> {
+    return this.http
+      .post<RespuestaLogin>(`${environment.apiUrl}/acceso/registro`, datos)
+      .pipe(tap((respuesta) => this.guardar(respuesta.token, respuesta.usuario)));
+  }
+
+  solicitarRecuperacion(correo: string): Observable<RespuestaMensaje> {
+    return this.http.post<RespuestaMensaje>(`${environment.apiUrl}/acceso/recuperar`, { correo });
+  }
+
+  restablecerContrasena(token: string, contrasena: string): Observable<RespuestaMensaje> {
+    return this.http.post<RespuestaMensaje>(`${environment.apiUrl}/acceso/restablecer`, {
+      token,
+      contrasena,
+    });
   }
 
   actualizarToken(token: string): void {

@@ -13,3 +13,16 @@ export interface RespuestaLogin {
   token: string;
   usuario: Usuario;
 }
+
+export interface SolicitudRegistro {
+  nombre: string;
+  correo: string;
+  contrasena: string;
+  documento_identidad: string;
+  telefono: string;
+  autorizacion_datos: boolean;
+}
+
+export interface RespuestaMensaje {
+  mensaje: string;
+}
